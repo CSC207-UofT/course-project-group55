@@ -1,4 +1,4 @@
-import java.util.Map;
+import java.util.Scanner;
 
 public class ChessGame {
     Player[] players;
@@ -21,7 +21,6 @@ public class ChessGame {
         Chessboard board = new Chessboard(8, 8);
 
         // White pawns
-        System.out.println(board.tiles[4][2]);
         board.tiles[0][1].setCurrentPiece(new Pawn("white", 0, 1));
         board.tiles[1][1].setCurrentPiece(new Pawn("white", 1, 1));
         board.tiles[2][1].setCurrentPiece(new Pawn("white", 2, 1));
@@ -64,19 +63,26 @@ public class ChessGame {
         return new ChessGame(player1, player2, board);
     }
 
+    //
     public String endGame() {
         return players[1] + "is the winner";
     }
 
+    // Main to simulate a Scholar's mate.
     public static void main(String[] args) {
         ChessGame game = startGame();
-        game.chessboard.movePiece(4, 1, 4, 3);
-        game.chessboard.movePiece(4, 6, 4, 4);
-        game.chessboard.movePiece(5, 0, 2, 3);
-        game.chessboard.movePiece(1, 0, 2, 5);
-        game.chessboard.movePiece(3, 0, 7, 4);
-        game.chessboard.movePiece(6, 7, 5, 5);
-        game.chessboard.movePiece(7, 4, 5, 6);
-        game.chessboard.inCheck(4, 6);
+        //Scanner scanner = new Scanner(System.in);
+        //System.out.print("Enter ");
+
+
+        // Scholar's mate moves (NOT WORKING).
+        //game.chessboard.movePiece(4, 1, 4, 3);
+        //game.chessboard.movePiece(4, 6, 4, 4);
+        //game.chessboard.movePiece(5, 0, 2, 3);
+        //game.chessboard.movePiece(1, 0, 2, 5);
+        //game.chessboard.movePiece(3, 0, 7, 4);
+        //game.chessboard.movePiece(6, 7, 5, 5);
+        //game.chessboard.movePiece(7, 4, 5, 6);
+        //System.out.print(game.chessboard.inCheck(4, 7));
     }
 }

@@ -7,6 +7,11 @@ public class Chessboard {
 
     public Chessboard(int width, int height) {
         this.tiles = new Tile[width][height];
+        for (int w = 0; w < 8; w++) {
+            for (int h = 0; h < 8; h++) {
+                tiles[h][w] = new Tile(new EmptyPiece(w,h));
+            }
+        }
     }
 
     public Piece takePiece(int x, int y) {
@@ -52,11 +57,13 @@ public class Chessboard {
         else if (tiles[destx][desty].getCurrentPiece() instanceof EmptyPiece) {
             tiles[destx][desty].setCurrentPiece(tiles[startx][starty].getCurrentPiece());
             tiles[startx][starty].clearPiece();
+            return true;
         }
         // Enemy piece on destination
         else if (!(tiles[destx][desty].getCurrentPiece() instanceof EmptyPiece) &
                 !(movingPiece.getColour().equals(tiles[destx][desty].getCurrentPiece().getColour()))) {
             tiles[destx][desty].setCurrentPiece(takePiece(startx,starty));
+            return true;
         }
         return true; // if it passes the occlusion check movement is fine.
     }
