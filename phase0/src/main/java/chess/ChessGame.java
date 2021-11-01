@@ -1,23 +1,27 @@
 package chess;
 
+import player.Player;
+import player.PlayerFactory;
+import player.PlayerRole;
+
 public class ChessGame {
     Player[] players;
     Chessboard chessboard;
-    // Map<chess.Player, int[][]> moveHistory;   TODO: Implement move history tracking
+    // Map<player.Player, int[][]> moveHistory;   TODO: Implement move history tracking
 
     // Can overload constructors for higher player counts. Maybe find a way to do this dynamically?
     public ChessGame(Player player1, Player player2, Chessboard board) {
         this.players = new Player[] {player1, player2};
         this.chessboard = board;
-        //this.moveHistory = new Map<chess.Player, Integer[2][2]>;
+        //this.moveHistory = new Map<player.Player, Integer[2][2]>;
     }
 
     // This is almost certainly not how the game will work in the finished product.
     // Purely intended to demonstrate the rest of the code.
     public static ChessGame startGame() {
         //initialize a chess game
-        Player player1 = new Player("demo1");
-        Player player2 = new Player("demo2");
+        Player player1 = PlayerFactory.newPlayer("demo1", PlayerRole.Gust);
+        Player player2 = PlayerFactory.newPlayer("demo2", PlayerRole.Gust);
         Chessboard board = new Chessboard(8, 8);
 
         // White pawns
