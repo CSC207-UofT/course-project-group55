@@ -1,14 +1,9 @@
 package player;
 
-import chess.PieceRole;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-
-import static chess.PieceRole.*;
-import static chess.PieceRole.values;
 
 public abstract class Player implements Serializable, Comparable<Player> {
     private String name;
@@ -21,7 +16,7 @@ public abstract class Player implements Serializable, Comparable<Player> {
     protected Player(String name) {
         this.name = name;
         this.enemyPiecesTaken = new HashMap<>();
-        for (PieceRole role : values()) {
+        for (PieceRole role : PieceRole.values()) {
             this.enemyPiecesTaken.put(role, 0);
         }
     }
