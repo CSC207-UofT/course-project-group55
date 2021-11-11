@@ -1,14 +1,32 @@
 package chess;
 
-public class PieceFactory {
-    public static Piece newPiece(PieceRole pieceRole, String colour, int xPos, int yPos){
-        return switch (pieceRole){
-            case King -> new King(colour, xPos, yPos);
-            case Queen -> new Queen(colour, xPos, yPos);
-            case Rook -> new Rook(colour, xPos, yPos);
-            case Knight -> new Knight(colour, xPos, yPos);
-            case Bishop -> new Bishop(colour, xPos, yPos);
-            case Pawn -> new Pawn(colour, xPos, yPos);
-        };
+
+/**
+ * Generates a piece using the char received based on the
+ * Use ONLY for FEN notation; for 2 player chess.
+ */
+public class PieceFactory{
+    public static Piece newPiece(char letter)
+            throws InvalidFENException {
+        playerColor color;
+
+        if(Character.isUpperCase(letter)) color = playerColor.White;
+        else color = playerColor.Black;
+
+        letter = Character.toUpperCase(letter);
+
+        Piece newPiece;
+        if      (letter == 'K') newPiece = new King(color);
+        else if (letter == 'Q') newPiece = new Queen(color);
+        else if (letter == 'R') newPiece = new Rook(color);
+        else if (letter == 'N') newPiece = new Knight(color);
+        else if (letter == 'B') newPiece = new Bishop(color);
+        else if (letter == 'P') newPiece = new Pawn(color);
+        else if (letter == 'E') newPiece = new Edge(color);
+        else {
+            throw new InvalidFENException("Letter in FEN does not correspond to a valid Piece");
+        }
+
+        return newPiece;
     }
 }

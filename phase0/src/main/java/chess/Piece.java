@@ -1,37 +1,215 @@
 package chess;
 
-public abstract class Piece {
-    String colour;
-    int xPos;
-    int yPos;
+import java.text.MessageFormat;
+import java.util.HashSet;
+import java.util.Set;
 
-    public Piece(String colour, int xPos, int yPos) {
-        this.colour = colour;
-        this.xPos = xPos;
-        this.yPos = yPos;
+public abstract class Piece implements Cloneable{
+    protected playerColor color;
+    protected boolean canMoveInLine = true;
+
+    abstract Set<Coord> moveDirection();
+
+    public playerColor color(){
+        return color;
     }
 
-    public int getXPos() {
-        return xPos;
+    boolean canMoveInLine(){
+        return canMoveInLine;
     }
 
-    public int getYPos() {
-        return yPos;
+    /**
+     * @return      the name of the subclass. "Pawn" if it's a Pawn obj, etc.
+     */
+    public String pieceName() {return getClass().getName().split( "\\.")[1]; }
+
+    /**
+     * @return      corresponding FEN character of the current Piece.
+     */
+    public char FENChar(){
+        char FENChar = getClass().getName().split("\\.")[1].toCharArray()[0];
+        if(color == playerColor.White) FENChar = Character.toUpperCase(FENChar);
+        else FENChar = Character.toLowerCase(FENChar);
+        return FENChar;
     }
 
-    public String getColour() {
-        return colour;
+    /** @return  string rep of Piece obj. Also affects System.out.print */
+    @Override
+    public String toString() {
+        return getClass().getName() + MessageFormat.format(
+                " {0}", color);
     }
 
-    public int[][] giveMovePath(int destx, int desty) {
-        if (destx == xPos & desty == yPos) {
-            return new int[][] {};
+
+    @Override
+    public Piece clone() {
+        try {
+            return (Piece) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError("Error occured while trying to clone Piece Obj");
         }
-        // this only works for 8x8 board. Need to figure out solution for different board sizes.
-        // Specific movement behaviour for each piece will be overwritten in subclasses here.
-        else if (0 <= destx & destx <= 7 & 0 <= desty & desty <= 7) {
-            return new int[][] {};
+    }
+}
+
+
+/* ************************************************************************** */
+
+
+class King extends Piece{
+
+    public King(playerColor color){
+        this.color = color;
+        canMoveInLine = false;
+    }
+
+    Set<Coord> moveDirection(){
+        Set<Coord> movementUnits = Coord.Coords(new int[][]{
+                {1, 0},
+                {0, 1},
+                {-1, 1},
+                {1, 1}
+        });
+        Set<Coord> newUnits = new HashSet<>();
+        for (Coord direction : movementUnits) {
+            newUnits.add(direction.multiply(-1));
         }
-        return new int[][] {};
+        movementUnits.addAll(newUnits);
+
+        return movementUnits;
+    }
+}
+
+
+class Queen extends Piece{
+
+    public Queen(playerColor color){
+        this.color = color;
+    }
+
+    Set<Coord> moveDirection(){
+        Set<Coord> movementUnits = Coord.Coords(new int[][]{
+                {1, 0},
+                {0, 1},
+                {-1, 1},
+                {1, 1}
+        });
+        Set<Coord> newUnits = new HashSet<>();
+        for (Coord direction : movementUnits) {
+            newUnits.add(direction.multiply(-1));
+        }
+        movementUnits.addAll(newUnits);
+
+        return movementUnits;
+    }
+}
+
+
+class Bishop extends Piece{
+
+    public Bishop(playerColor color){
+        this.color = color;
+    }
+
+    Set<Coord> moveDirection(){
+
+        Set<Coord> movementUnits = Coord.Coords(new int[][]{
+                {-1, 1},
+                {1, 1}
+        });
+        Set<Coord> newUnits = new HashSet<>();
+        for (Coord direction : movementUnits) {
+            newUnits.add(direction.multiply(-1));
+        }
+        movementUnits.addAll(newUnits);
+
+        return movementUnits;
+    }
+}
+
+
+class Rook extends Piece{
+
+    public Rook(playerColor color){
+        this.color = color;
+    }
+
+    Set<Coord> moveDirection(){
+
+        Set<Coord> movementUnits = Coord.Coords(new int[][]{
+                {1, 0},
+                {0, 1}
+        });
+        Set<Coord> newUnits = new HashSet<>();
+        for (Coord direction : movementUnits) {
+            newUnits.add(direction.multiply(-1));
+        }
+        movementUnits.addAll(newUnits);
+
+        return movementUnits;
+    }
+}
+
+
+class Knight extends Piece{
+
+    public Knight(playerColor color){
+        this.color = color;
+        canMoveInLine = false;
+    }
+
+    Set<Coord> moveDirection(){
+
+        Set<Coord> movementUnits = Coord.Coords(new int[][]{
+                {1, 2},
+                {2, 1},
+                {-1, 2},
+                {-2, 1}
+        });
+        Set<Coord> newUnits = new HashSet<>();
+        for (Coord direction : movementUnits) {
+            newUnits.add(direction.multiply(-1));
+        }
+        movementUnits.addAll(newUnits);
+
+        return movementUnits;
+    }
+
+    @Override
+    public char FENChar(){
+        char FENChar = 'N';
+        if (color != playerColor.White) FENChar = Character.toLowerCase(FENChar);
+        return FENChar;
+    }
+}
+
+
+class Pawn extends Piece{
+
+    public Pawn(playerColor color){
+        this.color = color;
+        canMoveInLine = false;
+    }
+
+    Set<Coord> moveDirection(){
+        int direction = 1;
+        if(color == playerColor.Black) direction = -1;
+
+        return Coord.Coords(new int[][]{
+                {0, direction}
+        });
+    }
+}
+
+
+class Edge extends Piece{
+
+    public Edge(playerColor color){
+        this.color = null;
+        canMoveInLine = false;
+    }
+
+    Set<Coord> moveDirection(){
+
+        return new HashSet<>();
     }
 }
