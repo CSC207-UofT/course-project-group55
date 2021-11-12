@@ -229,6 +229,15 @@ public class Chessboard{
         return false;
     }
 
+    /**
+     * @param coord     coordinate to check the piece color of
+     * @return          True if piece located at coord is the same color with the player who currently has the turn
+     */
+    boolean isEnemyPiece(Coord coord){
+        if (hasPieceAt(coord)) return pieceAt(coord).color() != turnColor;
+        return false;
+    }
+
     playerColor currColor(){
         return turnColor;
     }

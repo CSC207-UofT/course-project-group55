@@ -89,18 +89,12 @@ class ChessRuleBook {
         potentialTakes.add(primaryMoveDirection.add(-1, 0).add(currTurn.moveFrom));
 
         for (Coord takeTo: potentialTakes) {
-            if(!board.coordInBoard(takeTo) ||       // If move is not in bounds OR
-               board.isAlliedPiece(takeTo) ||       // If move is an ally OR
-               !board.hasPieceAt(takeTo) ||         // If move goes to an empty square OR
-               takeTo != board.enPassantSquare()) { // If move is not a valid enPassantSquare,
-                continue;}
-
-            // If moving into empty square, add to legal moves.
-            else legalMoves.add(takeTo);
-
-
+            if(board.coordInBoard(takeTo) &&
+                    (!board.isEnemyPiece(takeTo) ||       // is taking enemy piece OR
+                    takeTo == board.enPassantSquare())) { // is moving in to enPassantSquare
+                legalMoves.add(takeTo);
+            }
         }
-
 
         return legalMoves;
     }
