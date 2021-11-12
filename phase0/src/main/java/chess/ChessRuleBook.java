@@ -61,37 +61,33 @@ class ChessRuleBook {
 
     private Set<Coord> pawnLegalMoveSet(){
         Piece pieceToMove = board.pieceAt(currTurn.moveFrom);
-        Coord primaryMoveDirection = new Coord(-1, -1);
-        for(Coord move: pieceToMove.moveDirection()) primaryMoveDirection = move;
-
-        if(primaryMoveDirection.x == -1) {
-            throw new AssertionError("Pawn.moveDirection() was not called properly");
-        }
+        Coord primaryMoveDirection = ((Pawn)pieceToMove).primaryMoveDirection();
 
         Set<Coord> legalMoves = new HashSet<>();
 
         Coord moveTo = currTurn.moveFrom.add(primaryMoveDirection);
 
-        // If move is in bounds and is not moving into a piece, add to legal moves.
+        // See if moving forward once is legal
         if(board.coordInBoard(moveTo) && !board.hasPieceAt(moveTo)) legalMoves.add(moveTo);
 
-        // If moving back 2 tiles places the pawn out of bounds, then it is at its starting square
-        // and can move 2 squares forward.
+        // See if pawn is at starting square
         Coord moveTwoTiles = primaryMoveDirection.multiply(2);
-        if(board.coordInBoard(currTurn.moveFrom.subtract(moveTwoTiles))){
+        if(!board.coordInBoard(currTurn.moveFrom.subtract(moveTwoTiles))){
             Coord moveTwo = currTurn.moveFrom.add(moveTwoTiles);
+            // See moving forward twice is legal
             if(board.coordInBoard(moveTwo) && !board.hasPieceAt(moveTwo)) legalMoves.add(moveTwo);
         }
 
-        // To test if any taking move is legal TODO
+        // To test if any taking move is legal
         Set<Coord> potentialTakes = new HashSet<>();
         potentialTakes.add(primaryMoveDirection.add(1, 0).add(currTurn.moveFrom));
         potentialTakes.add(primaryMoveDirection.add(-1, 0).add(currTurn.moveFrom));
 
         for (Coord takeTo: potentialTakes) {
+            System.out.println("takeTo" + takeTo);
             if(board.coordInBoard(takeTo) &&
-                    (!board.isEnemyPiece(takeTo) ||       // is taking enemy piece OR
-                    takeTo == board.enPassantSquare())) { // is moving in to enPassantSquare
+                    (board.isEnemyPiece(takeTo) ||       // is taking enemy piece OR
+                    board.isEnPassantSquare(takeTo))) { // is moving in to enPassantSquare
                 legalMoves.add(takeTo);
             }
         }

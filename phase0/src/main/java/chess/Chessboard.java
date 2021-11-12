@@ -17,7 +17,7 @@ public class Chessboard{
     private Map<Coord, Piece> state = new HashMap<>();
     private playerColor turnColor;
     private Set<Character> castling = new HashSet<>();
-    private Coord enPassantSquare;
+    Coord enPassantSquare;
     private int halfMoveClock;
     private int fullMoveNumber;
 
@@ -200,9 +200,35 @@ public class Chessboard{
         }
         Piece pieceToMove = state.get(move.moveFrom);
         state.remove(move.moveFrom);
-        if(hasPieceAt(move.moveTo)) state.replace(move.moveTo, pieceToMove);
-        else state.put(move.moveTo, pieceToMove);
 
+        // Moving and removing pieces; Also handles halfMoveClock
+        if(hasPieceAt(move.moveTo)){ // If the move is taking a Piece
+            state.replace(move.moveTo, pieceToMove);
+            halfMoveClock = 0;
+        }else if(pieceToMove instanceof Pawn && isEnPassantSquare(move.moveTo)){ // If move is enPassant
+            // The only legal move in chess </jk>
+            Coord primaryMoveDirection = ((Pawn) pieceToMove).primaryMoveDirection();
+            state.put(move.moveTo, pieceToMove);
+            state.remove(move.moveTo.add(primaryMoveDirection.multiply(-1)));
+            halfMoveClock = 0;
+        }else { // If the move isn't taking
+            state.put(move.moveTo, pieceToMove);
+            if(pieceToMove instanceof Pawn){
+                halfMoveClock = 0;
+            }else halfMoveClock ++;
+        }
+
+        // enPassantSquare Logic
+        if(pieceToMove instanceof Pawn){
+            Coord primaryMoveDirection = ((Pawn) pieceToMove).primaryMoveDirection();
+            // Pawn moved two squares and has a neighbouring enemy pawn on either side
+            if (move.moveTo.subtract(move.moveFrom).equals(primaryMoveDirection.multiply(2)) &&
+                    (hasEnemyPawn(move.moveTo.add(1,0)) || hasEnemyPawn(move.moveTo.add(-1,0)))) {
+                enPassantSquare = move.moveFrom.add(primaryMoveDirection);
+            }else enPassantSquare = null;
+        }else enPassantSquare = null;
+
+        // Code to switch turns and add turnNumber
         if(turnColor == playerColor.White) turnColor = playerColor.Black;
         else{
             turnColor = playerColor.White;
@@ -210,6 +236,11 @@ public class Chessboard{
         }
 
         System.out.println("Piece Moved");
+    }
+
+    private boolean hasEnemyPawn(Coord coord){
+        if(isEnemyPiece(coord)) return pieceAt(coord) instanceof Pawn;
+        return false;
     }
 
     public Map<Coord, Piece> getBoard(){
@@ -242,22 +273,26 @@ public class Chessboard{
         return turnColor;
     }
 
-    Set<Character> castlingRights(){
+    Set<Character> getCastlingRights(){
         return castling;
     }
 
-    Coord enPassantSquare(){
-        return enPassantSquare;
+    boolean isEnPassantSquare(Coord coord){
+        if(enPassantSquare != null) return enPassantSquare.equals(coord);
+        else return false;
     }
 
-    private int halfMoveClock(){
+    int getHalfMoveClock(){
         return halfMoveClock;
     }
 
+    int getFullMoveNumber(){
+        return fullMoveNumber;
+    }
 
-    /** @return  piece placement part of FEN of current boardState. Also affects System.out.print */
-    @Override
-    public String toString() {
+    public String FEN(){
+
+        StringBuilder FENString = new StringBuilder();
 
         char[][] pieceArray = new char[size[0]][size[1]];
 
@@ -265,6 +300,7 @@ public class Chessboard{
             pieceArray[size[1] - 1 - coord.y][coord.x] = state.get(coord).FENChar();
         }
 
+        // Piece part of FEN
         StringBuilder strRepresentation = new StringBuilder();
         for (char[] row : pieceArray) {
             int i = 0;
@@ -282,8 +318,42 @@ public class Chessboard{
             if(i > 0) strRepresentation.append(i);
             strRepresentation.append("/");
         }
+        FENString.append(strRepresentation.substring(0, strRepresentation.length() - 1));
+        FENString.append(" ");
 
-        return getClass().getName() + " " + strRepresentation.substring(0, strRepresentation.length() - 1);
+
+        // Turn color of FEN
+        if(turnColor == playerColor.White) FENString.append("w");
+        else FENString.append("b");
+        FENString.append(" ");
+
+        if(castling.size() == 0) FENString.append("-");
+        else {
+            if (castling.contains('K')) FENString.append("K");
+            if (castling.contains('Q')) FENString.append("Q");
+            if (castling.contains('k')) FENString.append("k");
+            if (castling.contains('q')) FENString.append("q");
+        }
+        FENString.append(" ");
+
+        // enPassantSquare part of FEN
+        if(enPassantSquare == null) FENString.append("-");
+        else FENString.append((char)(enPassantSquare.x + 'a') ).append((char)(enPassantSquare.y + '0'));
+        FENString.append(" ");
+
+        FENString.append(halfMoveClock);
+        FENString.append(" ");
+
+        FENString.append(fullMoveNumber);
+        FENString.append(" ");
+
+        return FENString.toString();
+    }
+
+    /** @return  piece placement part of FEN of current boardState. Also affects System.out.print */
+    @Override
+    public String toString() {
+        return getClass().getName() + " " + FEN();
     }
 
 }

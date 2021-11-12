@@ -198,6 +198,15 @@ class Pawn extends Piece{
                 {0, direction}
         });
     }
+
+    Coord primaryMoveDirection(){
+        int direction = 1;
+        if(color == playerColor.Black) direction = -1;
+
+        return new Coord(0, direction);
+    }
+
+
 }
 
 
