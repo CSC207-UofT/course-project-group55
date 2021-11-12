@@ -194,6 +194,13 @@ public class Chessboard{
         return coordInBoard(new Coord(x, y));
     }
 
+    /**
+     * Automatically edits the board according to the parameter.
+     * Inputs are assumed to be a legal move.
+     * Updates turnColor, halfMoveClock and fullMoveCounter.
+     * Handles assigning enPassantSquare.
+     * @param move      a ChessTurn object, contains moveFrom and moveTo coords.
+     */
     void movePiece(ChessTurn move){
         if(!hasPieceAt(move.moveFrom) || !coordInBoard(move.moveFrom) || !coordInBoard(move.moveTo)){
             throw new AssertionError("Move is on an empty square, or is not in the board.");

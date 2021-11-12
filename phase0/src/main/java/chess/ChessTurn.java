@@ -6,7 +6,7 @@ public class ChessTurn {
     final boolean isTake;
     final boolean isCheck;
 
-    public ChessTurn(Coord from, Coord to, boolean take, boolean check){
+    public ChessTurn(Coord from, Coord to, boolean check){
         this.moveFrom = from;
         this.moveTo = to;
         isTake = take;

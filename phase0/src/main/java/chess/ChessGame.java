@@ -100,9 +100,6 @@ public class ChessGame {
         currLegalMoves = new HashSet<>();
     }
 
-
-
-
     /**
      * Sets currTurn.moveFrom to coord, and generates the legal moves of currPiece and puts it into currLegalMoves
      */
@@ -111,7 +108,6 @@ public class ChessGame {
         currLegalMoves = rules.currLegalMoveSet();
         if(verbose) System.out.println("currLegalMoves: " + currLegalMoves);
     }
-
 
     private void movePiece(Coord coord){
         currTurn.moveTo = coord;
@@ -147,12 +143,9 @@ public class ChessGame {
         selectCoord(new Coord(coord[0],coord[1]), playerID);
     }
 
-
     public Map<Coord, Piece> getBoard(){
         return board.getBoard();
     }
-
-
 
 
 }

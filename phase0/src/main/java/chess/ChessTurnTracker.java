@@ -9,7 +9,7 @@ class ChessTurnTracker {
     }
 
     ChessTurn makeMove(){
-        ChessTurn move = new ChessTurn(moveFrom, moveTo, false, false);
+        ChessTurn move = new ChessTurn(moveFrom, moveTo, false);
         deselect();
         return move;
     }
