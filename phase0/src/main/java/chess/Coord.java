@@ -63,7 +63,7 @@ public final class Coord {
 
 
     /**
-     * @param other Multiply both x, y by scalar
+     * @param other adds the x, y of other to this Coord obj
      * @return returns a new Coord obj with the intended x and y
      */
     public Coord add(Coord other){
@@ -73,16 +73,25 @@ public final class Coord {
         );
     }
 
-
-    /**
-     * @param x     number to be added to the x-coord
-     * @param y     number to be added to the y-coord
-     * @return      returns a new Coord obj with the intended x and y
-     */
     public Coord add(int x, int y){
         return new Coord(this.x + x, this.y + y);
     }
 
+
+    /**
+     * @param other subtract the x, y of other from this Coord obj
+     * @return returns a new Coord obj with the intended x and y
+     */
+    public Coord subtract(Coord other){
+        return new Coord(
+                x - other.coord('x'),
+                y - other.coord('y')
+        );
+    }
+
+    public Coord subtract(int x, int y){
+        return new Coord(this.x - x, this.y - y);
+    }
 
     /**
      * @param scalar    Multiply both x, y by scalar

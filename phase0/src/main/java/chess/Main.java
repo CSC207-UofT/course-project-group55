@@ -1,8 +1,5 @@
 package chess;
 
-import java.text.MessageFormat;
-import java.util.HashMap;
-
 public class Main {
 
     public static void main(String[] args) {

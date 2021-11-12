@@ -9,6 +9,7 @@ import java.util.HashSet;
  *
  */
 public class Chessboard{
+
     final private String[] boardSetup;
     final private String[] pieceSetup;
     final int[] size;
@@ -231,12 +232,15 @@ public class Chessboard{
     playerColor currColor(){
         return turnColor;
     }
+
     Set<Character> castlingRights(){
         return castling;
     }
+
     Coord enPassantSquare(){
         return enPassantSquare;
     }
+
     private int halfMoveClock(){
         return halfMoveClock;
     }
