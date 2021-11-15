@@ -31,13 +31,17 @@ public abstract class Piece implements Cloneable{
     /**
      * @return      the name of the subclass. "Pawn" if it's a Pawn obj, etc.
      */
-    public String pieceName() {return getClass().getName().split( "\\.")[1]; }
+    public String pieceName() {
+        String[] classInfo = getClass().getName().split( "\\.");
+        return classInfo[classInfo.length - 1];
+    }
 
     /**
      * @return      corresponding FEN character of the current Piece.
      */
     public char FENChar(){
-        char FENChar = getClass().getName().split("\\.")[1].toCharArray()[0];
+        String[] classInfo = getClass().getName().split( "\\.");
+        char FENChar = classInfo[classInfo.length - 1].toCharArray()[0];
         if(color == playerColor.White) FENChar = Character.toUpperCase(FENChar);
         else FENChar = Character.toLowerCase(FENChar);
         return FENChar;
