@@ -8,7 +8,7 @@ How to use:
 Notes:
  - Pieces can only move into Legal moves.
  - No extensive bug testing was done
- - Checking (the King) doesn't work yet; Pieces can move out of pins, and other pieces can freely move even if the king is under check.
+ - A checking mechanism has been implemented, but not yet integrated into the legal moves of Pieces. (Pins and Blocks)
 
 To Do:
  - Checking/CheckMate Mechanism
