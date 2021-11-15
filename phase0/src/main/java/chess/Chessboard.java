@@ -9,7 +9,7 @@ public class Chessboard{
 
     final private String[] boardSetup;
     final private String[] pieceSetup;
-    final int[] size;
+    final public int[] size;
 
     private Map<Coord, Piece> state = new HashMap<>();
     private playerColor turnColor;

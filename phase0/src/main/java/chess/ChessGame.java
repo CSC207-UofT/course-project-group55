@@ -11,7 +11,7 @@ public class ChessGame {
     Player[] players;
     Map<String, playerColor> playerColors;
 
-    final Chessboard board;
+    final public Chessboard board;
     final ChessTurnTracker currTurn = new ChessTurnTracker();
     Set<Coord> currLegalMoves = new HashSet<>();
 
@@ -41,6 +41,11 @@ public class ChessGame {
         for (int i = 0; i < playerColor.values().length; i++) {
             playerColors.put(players[i].getName(), playerColor.values()[i]);
         }
+        board = new Chessboard();
+    }
+
+    public ChessGame(){
+        playerColors = new HashMap<>();
         board = new Chessboard();
     }
 
