@@ -1,4 +1,4 @@
-package lan;
+package Lan;
 
 import java.io.*;
 import java.net.Socket;
