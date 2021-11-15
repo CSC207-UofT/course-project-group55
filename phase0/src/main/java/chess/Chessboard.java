@@ -293,7 +293,7 @@ public class Chessboard{
         return false;
     }
 
-    playerColor currColor(){
+    public playerColor currColor(){
         return turnColor;
     }
 

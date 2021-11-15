@@ -121,7 +121,7 @@ public final class Coord {
     }
 
     public String letterCoord(){
-        return "" + (char)(x + 'a') + (char)(y + '0');
+        return "" + (char)(x + 'a') + (char)(y + '1');
     }
 
     /**

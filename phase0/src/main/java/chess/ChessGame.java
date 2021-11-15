@@ -51,8 +51,6 @@ public class ChessGame {
 
     public void runGame(Coord coord){
         Coord[] legalMoves;
-
-
     }
 
     /** <b>Primary method of selecting/moving pieces.</b><br>
