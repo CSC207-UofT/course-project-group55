@@ -1,6 +1,7 @@
 package chess;
 
 public class Main {
+    private ChessGame game;
 
     public static void main(String[] args) {
 
@@ -28,7 +29,7 @@ public class Main {
                 "e5", "d6",
         };
 
-        for (String move: enPassant) {
+        for (String move: scholarsMate) {
             Coord moveC = new Coord(move);
             System.out.println(moveC + " " + move);
 
@@ -37,7 +38,9 @@ public class Main {
             System.out.println(game.board.FEN());
             System.out.println();
 
+
         }
+
 
     }
 }

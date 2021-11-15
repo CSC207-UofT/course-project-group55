@@ -11,9 +11,8 @@ public class ChessGame {
     Player[] players;
     Map<String, playerColor> playerColors;
 
-    Chessboard board;
-    ChessTurnTracker currTurn = new ChessTurnTracker();
-    ChessRuleBook rules;
+    final Chessboard board;
+    final ChessTurnTracker currTurn = new ChessTurnTracker();
     Set<Coord> currLegalMoves = new HashSet<>();
 
     public boolean verbose = false;
@@ -31,7 +30,6 @@ public class ChessGame {
             playerColors.put(players[i].getName(), playerColor.values()[i]);
         }
         board = new Chessboard(FEN);
-        rules = new ChessRuleBook(board, currTurn);
     }
 
     /**
@@ -44,7 +42,6 @@ public class ChessGame {
             playerColors.put(players[i].getName(), playerColor.values()[i]);
         }
         board = new Chessboard();
-        rules = new ChessRuleBook(board, currTurn);
     }
 
     public void runGame(Coord coord){
@@ -105,8 +102,14 @@ public class ChessGame {
      */
     private void selectPieceAt(Coord coord){
         currTurn.moveFrom = coord;
-        currLegalMoves = rules.currLegalMoveSet();
+        currLegalMoves = currLegalMoveSet();
         if(verbose) System.out.println("currLegalMoves: " + currLegalMoves);
+    }
+
+    Set<Coord> currLegalMoveSet(){
+        Piece pieceToMove = board.pieceAt(currTurn.moveFrom);
+        if(pieceToMove == null || pieceToMove instanceof Edge) return new HashSet<>();
+        return pieceToMove.legalMoveSet(currTurn.moveFrom, board);
     }
 
     private void movePiece(Coord coord){

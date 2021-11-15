@@ -15,6 +15,8 @@ public final class Coord {
             generatedCoords.add(new Coord(coord));
         }
         return generatedCoords;
+
+
     }
 
     public static Set<Coord> Coords(int[][] coords){
@@ -42,12 +44,10 @@ public final class Coord {
         y = coordSetup[1] - '1';
     }
 
-
     /** @return an ArrayList containing this.x and this.y  */
     public int[] coords(){
         return new int[]{x, y};
     }
-
 
     /**
      * @param axis  input 'x' or 'y'
@@ -60,7 +60,6 @@ public final class Coord {
 
         return map.get(axis);
     }
-
 
     /**
      * @param other adds the x, y of other to this Coord obj
@@ -101,12 +100,29 @@ public final class Coord {
         return new Coord(this.x * scalar, this.y * scalar);
     }
 
-
     /**
      * @return      higher number between x and y
      */
     public int maxNorm (){return Integer.max(x, y);}
 
+    public boolean isSameDirection(Coord other){
+        return this.rotateCW().dotProduct(other) == 0 && this.dotProduct(other) > 0;
+    }
+
+    /**
+     * @return      returns a Coord(Vector) that is Clockwise rotated by 90 degrees.
+     */
+    private Coord rotateCW(){
+        return new Coord(y, -x);
+    }
+
+    private int dotProduct(Coord other){
+        return x * other.x + y * other.y;
+    }
+
+    public String letterCoord(){
+        return "" + (char)(x + 'a') + (char)(y + '0');
+    }
 
     /**
      * Required to use Coord obj as keys in a Hashmap
@@ -129,7 +145,6 @@ public final class Coord {
         return (this.x == other.x && this.y == other.y);
     }
 
-
     /**
      * Required to use Coord obj as keys in a Hashmap
      * @return      hashCode of Coord obj.
@@ -139,7 +154,6 @@ public final class Coord {
         final int SPACE = 1000;
         return (coord('x') * SPACE + coord('y')) * 17;
     }
-
 
     /** @return  string rep of Coord obj. */
     @Override
