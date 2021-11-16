@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 //Client and Server can communicate. I will be using these to make methods that are
 //needed for our chess Lan Game. For This to work, run server, then client. Then Server has to send message first
-//then client, then server back and forth.
+//then client, then server back and forth
 public class Server {
     public static void main(String[] args) throws IOException {
 
