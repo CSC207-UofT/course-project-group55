@@ -1,94 +1,73 @@
 package lan;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
+
+//Client and Server can communicate. I will be using these to make methods that are
+//needed for our chess Lan Game. For This to work, run server, then client. Then Server has to send message first
+//then client, then server back and forth.
 public class Client {
+    public static void main(String[] args){
+        Socket socket = null;
+        InputStreamReader inputStreamReader = null;
+        OutputStreamWriter outputStreamWriter = null;
+        BufferedReader bufferedReader = null;
+        BufferedWriter bufferedWriter = null;
 
-    private Socket socket;
-    private BufferedReader bufferedReader;
-    private BufferedWriter bufferedWriter;
-    private String username;
-
-    public Client(Socket socket, String username){
         try{
-            this.socket = socket;
-            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.username = username;
-        } catch (IOException e) {
-            closeEverything(socket, bufferedReader, bufferedWriter);
-        }
-    }
+            socket = new Socket("localhost", 1234);
 
-    public void sendMessage(){
-        try{
-            bufferedWriter.write(username);
-            bufferedWriter.newLine();
-            bufferedWriter.flush();
+            inputStreamReader = new InputStreamReader(socket.getInputStream());
+            outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
+
+            bufferedReader = new BufferedReader(inputStreamReader);
+            bufferedWriter = new BufferedWriter(outputStreamWriter);
 
             Scanner scanner = new Scanner(System.in);
-            while (socket.isConnected()){
-                String messageToSend = scanner.nextLine();
-                bufferedWriter.write(username + ": " + messageToSend);
+
+            while (true){
+                //Gets Input from Server
+                String msgFromServer = bufferedReader.readLine();
+                System.out.println("Server: " + msgFromServer);
+
+                //Gets Sends Message
+                String msgToSend = scanner.nextLine();
+                bufferedWriter.write(msgToSend);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
-            }
 
-        }catch (IOException e) {
-            closeEverything(socket, bufferedReader, bufferedWriter);
-        }
-    }
-    public void listenForMessage() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String msgFromGroupChat;
-                while(socket.isConnected()){
-                    try{
-                        msgFromGroupChat = bufferedReader.readLine();
-                        System.out.println(msgFromGroupChat);
-                    }catch(IOException e) {
-                        closeEverything(socket, bufferedReader, bufferedWriter);
-                    }
-                }
-            }
-        }).start();
-    }
+                if (msgFromServer.equalsIgnoreCase("BYE") || msgToSend.equalsIgnoreCase("BYE"))
+                    break;
 
-    public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
-        closeSocketBufferedRW(socket, bufferedReader, bufferedWriter);
-    }
-
-    static void closeSocketBufferedRW(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
-        try{
-            //closing bufferedReader and Writer will close outputStreamWriter and InputStreamReader
-            if (bufferedReader != null){
-                bufferedReader.close();
             }
-            if (bufferedWriter != null){
-                bufferedWriter.close();
-            }
-            //closing socket will close socket.InputStream and socket.OutputStream
-            if (socket != null){
-                socket.close();
-            }
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                if (socket != null){
+                    socket.close();
+                }
+                if (inputStreamReader != null){
+                    inputStreamReader.close();
+                }
+                if (outputStreamWriter != null){
+                    outputStreamWriter.close();
+                }
+                if (bufferedReader != null){
+                    bufferedReader.close();
+                }
+                if (bufferedWriter != null){
+                    bufferedWriter.close();
+                }
+            } catch (IOException e){
+                e.printStackTrace();
+            }
         }
-    }
-
-    public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter your username for the group chat: ");
-        String username = scanner.nextLine();
-        //connecting to the server port 1234
-        Socket socket = new Socket("localhost", 1234);
-        Client client = new Client(socket, username);
-        //one thread of just receiving message loop
-        client.listenForMessage();
-        //another thread of just sending message loop
-        client.sendMessage();
     }
 }
