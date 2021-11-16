@@ -44,7 +44,6 @@ class ChessCheckTracker {
         List<Coord> lineOfCoords = new ArrayList<>();
         for (int i = 1; true; i++) {
             Coord moveTo = direction.multiply(-i).add(currKingCoord);
-            System.out.println("Checking: " + moveTo);
             lineOfCoords.add(moveTo);
             if(!board.coordInBoard(moveTo)) break;
             else if(!board.isEnemyPiece(moveTo) || board.pieceAt(moveTo) instanceof King);
@@ -55,7 +54,6 @@ class ChessCheckTracker {
                 }
             }else if(pieceMovesInDirection(moveTo, direction)){
                 lineOfSights.put(moveTo, generateLineOfSight(new ArrayList<>(lineOfCoords)));
-                System.out.println(lineOfSights);
             }
         }
     }
@@ -66,7 +64,6 @@ class ChessCheckTracker {
 
     private LineOfSight generateLineOfSight(List<Coord> line){
         Collections.reverse(line);
-        System.out.println("UHHHHHH: " + board.pieceAt(line.get(0)) + line);
         return new LineOfSight(board.pieceAt(line.get(0)), line);
 
     }
@@ -106,10 +103,7 @@ class ChessCheckTracker {
 
         for (Coord direction : queenDirections()) {
             if (direction.isSameDirection(pieceToKingVec)) {
-                System.out.println("updateLOS to: " + pieceCoord);
-
                 generateLineOfSightsInDirection(direction);
-                System.out.println("Line of Sights Map: " + lineOfSights);
             }
         }
     }

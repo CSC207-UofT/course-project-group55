@@ -209,7 +209,6 @@ public class Chessboard{
         switchTurns();
 
         currCheckTracker().update(move, isEnPassant);
-        if(isKingChecked()) System.out.println("Check!");
 
         System.out.println("Piece Moved");
 
