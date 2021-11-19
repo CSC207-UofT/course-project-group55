@@ -158,7 +158,8 @@ public final class Coord {
     /** @return  string rep of Coord obj. */
     @Override
     public String toString() {
-        return getClass().getName() + MessageFormat.format(": ({0}, {1})",x ,y);
+        return getClass().getName() + MessageFormat.format(
+                ": {0} ({1}, {2})", letterCoord(), x, y);
     }
 
 

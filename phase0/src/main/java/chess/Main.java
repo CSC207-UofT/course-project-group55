@@ -1,5 +1,7 @@
 package chess;
 
+import java.util.Scanner;
+
 public class Main {
     private ChessGame game;
 
@@ -29,9 +31,20 @@ public class Main {
                 "e5", "d6",
         };
 
-        for (String move: scholarsMate) {
+        String[] bongCloudExtended = new String[] {
+                "e2", "e4",
+                "e7", "e5",
+                "e1", "e2",
+                "e8", "e7",
+                "d2", "d3",
+                "d8", "e8",
+                "c1", "g5",
+                "e7", "d6",
+        };
+
+        for (String move: bongCloudExtended) {
             Coord moveC = new Coord(move);
-            System.out.println(moveC + " " + move);
+            System.out.println(moveC);
 
             game.selectCoord(moveC);
 
@@ -41,8 +54,8 @@ public class Main {
             }
             System.out.println();
 
-
         }
+
 
 
     }

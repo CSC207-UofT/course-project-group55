@@ -27,6 +27,11 @@ public abstract class Piece implements Cloneable{
 
     abstract Set<Coord> moveDirection();
 
+    void movePiece(Chessboard board, ChessTurn move) {
+
+        if (board.hasPieceAt(move.to)) board.removePiece(move.to);
+        board.placePiece(move.to, this);
+    }
 
     /**
      * @return      the name of the subclass. "Pawn" if it's a Pawn obj, etc.
@@ -74,19 +79,6 @@ class King extends Piece{
         this.color = color;
     }
 
-    Set<Coord> moveDirection(){
-        Set<Coord> movementUnits = Coord.Coords(new int[][]{
-                {1, 0}, {0, 1}, {-1, 1}, {1, 1}
-        });
-        Set<Coord> newUnits = new HashSet<>();
-        for (Coord direction : movementUnits) {
-            newUnits.add(direction.multiply(-1));
-        }
-        movementUnits.addAll(newUnits);
-
-        return movementUnits;
-    }
-
     @Override
     Set<Coord> legalMoveSet(Coord pieceAt, Chessboard board){
         Set<Coord> legalMoves = new HashSet<>();
@@ -101,8 +93,27 @@ class King extends Piece{
         return legalMoves;
     }
 
-}
+    Set<Coord> moveDirection(){
+        Set<Coord> movementUnits = Coord.Coords(new int[][]{
+                {1, 0}, {0, 1}, {-1, 1}, {1, 1}
+        });
+        Set<Coord> newUnits = new HashSet<>();
+        for (Coord direction : movementUnits) {
+            newUnits.add(direction.multiply(-1));
+        }
+        movementUnits.addAll(newUnits);
 
+        return movementUnits;
+    }
+
+    @Override
+    void movePiece(Chessboard board, ChessTurn move) {
+        if (board.hasPieceAt(move.to)) board.removePiece(move.to);
+        board.placePiece(move.to, this);
+
+        board.currCheckTracker().generateNewLineOfSights();
+    }
+}
 
 
 class Queen extends Piece{
@@ -168,6 +179,16 @@ class Knight extends Piece{
         this.color = color;
     }
 
+    @Override
+    Set<Coord> legalMoveSet(Coord pieceAt, Chessboard board){
+        Set<Coord> legalMoves = new HashSet<>();
+        for (Coord direction: moveDirection()) {
+            Coord moveTo = pieceAt.add(direction);
+            if (board.coordInBoard(moveTo) && !board.isAlliedPiece(moveTo)) legalMoves.add(moveTo);
+        }
+        return legalMoves;
+    }
+
     Set<Coord> moveDirection(){
 
         Set<Coord> movementUnits = Coord.Coords(new int[][]{
@@ -186,16 +207,6 @@ class Knight extends Piece{
     }
 
     @Override
-    Set<Coord> legalMoveSet(Coord pieceAt, Chessboard board){
-        Set<Coord> legalMoves = new HashSet<>();
-        for (Coord direction: moveDirection()) {
-            Coord moveTo = pieceAt.add(direction);
-            if (board.coordInBoard(moveTo) && !board.isAlliedPiece(moveTo)) legalMoves.add(moveTo);
-        }
-        return legalMoves;
-    }
-
-    @Override
     public char FENChar(){
         char FENChar = 'N';
         if (color != playerColor.White) FENChar = Character.toLowerCase(FENChar);
@@ -209,27 +220,6 @@ class Pawn extends Piece{
     public Pawn(playerColor color){
         this.color = color;
     }
-
-    Set<Coord> moveDirection(){
-        int direction = (color == playerColor.White) ? 1: -1;
-        return Coord.Coords(new int[][]{
-                {0, direction}
-        });
-    }
-
-    Coord primaryMoveDirection(){
-        int direction = (color == playerColor.White) ? 1: -1;
-        return new Coord(0, direction);
-    }
-
-    Set<Coord> takeDirection(){
-        int direction = (color == playerColor.White) ? 1: -1;
-
-        return Coord.Coords(new int[][]{
-                {1, direction}, {-1, direction}
-        });
-    }
-
 
     @Override
     Set<Coord> legalMoveSet(Coord pieceAt, Chessboard board){
@@ -254,7 +244,41 @@ class Pawn extends Piece{
         return legalMoves;
     }
 
-    boolean atStartingSquare(Coord pieceAt, Chessboard board){
+    Set<Coord> moveDirection(){
+        int direction = (color == playerColor.White) ? 1: -1;
+        return Coord.Coords(new int[][]{
+                {0, direction}
+        });
+    }
+
+    Coord primaryMoveDirection(){
+        int direction = (color == playerColor.White) ? 1: -1;
+        return new Coord(0, direction);
+    }
+
+    Set<Coord> takeDirection(){
+        int direction = (color == playerColor.White) ? 1: -1;
+
+        return Coord.Coords(new int[][]{
+                {1, direction}, {-1, direction}
+        });
+    }
+
+    @Override
+    void movePiece(Chessboard board, ChessTurn move) {
+
+        if (board.hasPieceAt(move.to)){
+            board.removePiece(move.to);
+        }else if (board.isEnPassantSquare(move.to)){
+            board.removePiece(move.to.add(primaryMoveDirection().multiply(-1)));
+            board.isEnPassant = true;
+        }
+
+        board.placePiece(move.to, this);
+
+    }
+
+    private boolean atStartingSquare(Coord pieceAt, Chessboard board){
         return !board.coordInBoard(pieceAt.subtract(primaryMoveDirection().multiply(2)));
     }
 

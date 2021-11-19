@@ -15,7 +15,7 @@ public class Chessboard{
     private playerColor turnColor;
     private Set<Character> castling = new HashSet<>();
     Coord enPassantSquare;
-    private boolean isEnPassant = false;
+    boolean isEnPassant = false;
     private int halfMoveClock;
     private int fullMoveNumber;
 
@@ -147,8 +147,11 @@ public class Chessboard{
     }
 
     private void setupCheckTrackers(){
+
+        System.out.println("Setting up CheckTrackers:");
         checkTrackers.put(currColor(), new ChessCheckTracker(this));
         switchTurns();
+        System.out.println("Next one:");
         checkTrackers.put(currColor(), new ChessCheckTracker(this));
         switchTurns();
         fullMoveNumber --;
@@ -208,23 +211,27 @@ public class Chessboard{
         updateEnPassantSquare(move);
         switchTurns();
 
-        currCheckTracker().update(move, isEnPassant);
+        System.out.println("Cb.mP: Piece Moved");
+        System.out.println("Cb.mP; currColor: " + currColor());
 
-        System.out.println("Piece Moved");
+        currCheckTracker().update(move, isEnPassant);
 
     }
 
-    private void updatePiecePositions(ChessTurn move){
+    private void updatePiecePositions(ChessTurn move){ //TODO: Make a method (Piece.move) for max OOP-ness
         isEnPassant = false;
         Piece pieceToMove = state.get(move.from);
-        state.remove(move.from);
-        if(hasPieceAt(move.to)) state.replace(move.to, pieceToMove);        // If the move is taking a Piece
-        else if(pieceToMove instanceof Pawn && isEnPassantSquare(move.to)){ // If move is enPassant
-            Coord primaryMoveDirection = ((Pawn) pieceToMove).primaryMoveDirection();
-            state.put(move.to, pieceToMove);
-            state.remove(move.to.add(primaryMoveDirection.multiply(-1)));
-            isEnPassant = true;
-        } else state.put(move.to, pieceToMove);                               // If the move isn't taking
+        removePiece(move.from);
+
+        pieceToMove.movePiece(this, move);
+    }
+
+    void placePiece(Coord moveTo, Piece movedPiece){
+        state.put(moveTo, movedPiece);
+    }
+
+    void removePiece(Coord coord){
+        state.remove(coord);
     }
 
     private void updateHalfMoveClock(ChessTurn move){
@@ -236,8 +243,6 @@ public class Chessboard{
         if(pieceAt(move.to) instanceof Pawn){
             Pawn pawnToMove = (Pawn) pieceAt(move.to);
             Coord primaryMoveDirection = pawnToMove.primaryMoveDirection();
-            // Pawn moved two squares and has a neighbouring enemy pawn on either side
-
             if (move.movedBy().equals(primaryMoveDirection.multiply(2)) &&
                     (hasNeighboringEnemyPawn(move.to))) {
                 enPassantSquare = move.from.add(primaryMoveDirection);
@@ -262,7 +267,7 @@ public class Chessboard{
         }
     }
 
-    private ChessCheckTracker currCheckTracker(){
+    ChessCheckTracker currCheckTracker(){
         return checkTrackers.get(currColor());
     }
 

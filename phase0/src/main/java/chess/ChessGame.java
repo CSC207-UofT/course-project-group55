@@ -106,7 +106,7 @@ public class ChessGame {
     private void selectPieceAt(Coord coord){
         currTurn.moveFrom = coord;
         currLegalMoves = currLegalMoveSet();
-        if(verbose) System.out.println("currLegalMoves: " + currLegalMoves);
+        if(verbose) System.out.println("Piece selected; currLegalMoves: " + currLegalMoves);
     }
 
     Set<Coord> currLegalMoveSet(){

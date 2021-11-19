@@ -9,16 +9,24 @@ class ChessCheckTracker {
     private Map<Coord, LineOfSight> lineOfSights;
     private Coord currKingCoord;
 
+    private boolean verbose = false;
+
     ChessCheckTracker(Chessboard board){
         this.board = board;
         kingColor = board.currColor();
 
         currKingCoord = alliedKingCoord();
+        System.out.println("Generating new CheckTrackers:");
         generateNewLineOfSights();
+
 
     }
 
-    private void generateNewLineOfSights(){
+    void generateNewLineOfSights(){
+        if(verbose) System.out.println("CT:genNLOSs");
+
+        currKingCoord = alliedKingCoord();
+
         this.lineOfSights = new HashMap<>();
         for (Coord direction: knightDirections()) {
             Coord moveTo = direction.add(currKingCoord);
@@ -33,6 +41,12 @@ class ChessCheckTracker {
             generateLineOfSightsInDirection(direction);
         }
 
+        if(!"{}".equals(lineOfSights.toString())){
+            if(verbose) System.out.println("King color: " + kingColor);
+            if(verbose) System.out.println("curr King Coord: " +  currKingCoord);
+            if(verbose) System.out.println("LOS: " + lineOfSights);
+        }
+
     }
 
     /**
@@ -41,6 +55,8 @@ class ChessCheckTracker {
      * @param direction
      */
     private void generateLineOfSightsInDirection(Coord direction){
+        if(verbose) System.out.println("CT:genLOSInDir; Direction: " + direction.multiply(-1));
+
         List<Coord> lineOfCoords = new ArrayList<>();
         for (int i = 1; true; i++) {
             Coord moveTo = direction.multiply(-i).add(currKingCoord);
@@ -56,6 +72,7 @@ class ChessCheckTracker {
                 lineOfSights.put(moveTo, generateLineOfSight(new ArrayList<>(lineOfCoords)));
             }
         }
+
     }
 
     private boolean pieceMovesInDirection(Coord pieceCoord, Coord direction){
@@ -68,30 +85,38 @@ class ChessCheckTracker {
 
     }
 
+    /**
+     * Called whenever board.movePiece is called.
+     * @param move          to update lineOfSights
+     * @param isEnPassant   true if move was an enPassant
+     */
     void update(ChessTurn move, boolean isEnPassant){
+        if(verbose) System.out.println("CCT.Update" + kingColor + "; LOS:" + lineOfSights);
+
         if(board.currColor() != kingColor)
             throw new AssertionError("checkTracker with wrong color was called");
 
-        if(board.pieceAt(move.to) instanceof King) {
-            currKingCoord = move.to;
-            generateNewLineOfSights();
-        }
-        else{
-            currKingCoord = alliedKingCoord();
-            //TODO: (OPTIMIZE) Check If any two of the lines are the same and don't repeat
+        currKingCoord = alliedKingCoord();
+        if(!(board.pieceAt(move.to) instanceof King)) {
             updateLineOfSightTo(move.to);
-            updateLineOfSightTo(move.from);
+            if(!move.to.subtract(currKingCoord).isSameDirection(move.from.subtract(currKingCoord)))
+                updateLineOfSightTo(move.from);
             if(isEnPassant){
                 if(board.pieceAt(move.to) instanceof Pawn) {
                     Pawn movedPawn = (Pawn) board.pieceAt(move.to);
                     Coord enPassantSquare = move.to.subtract(movedPawn.primaryMoveDirection());
-                    updateLineOfSightTo(enPassantSquare);
+                    if(!move.to.subtract(currKingCoord).isSameDirection(enPassantSquare.subtract(currKingCoord)))
+                        updateLineOfSightTo(enPassantSquare);
                 }else throw new AssertionError("Non-Pawn Piece activated En Passant");
             }
+            if(verbose) System.out.println("updated: " + lineOfSights);
         }
+
     }
 
     private void updateLineOfSightTo(Coord pieceCoord){
+
+        if(verbose) System.out.println("CCT.UpdateLOSTo: " + pieceCoord);
         Coord pieceToKingVec = currKingCoord.subtract(pieceCoord);
 
         if(knightDirections().contains(pieceToKingVec) && board.pieceAt(pieceCoord) instanceof Knight){
@@ -105,6 +130,11 @@ class ChessCheckTracker {
             if (direction.isSameDirection(pieceToKingVec)) {
                 generateLineOfSightsInDirection(direction);
             }
+        }
+        if(!"{}".equals(lineOfSights.toString())){
+            if(verbose) System.out.println("King color: " + kingColor);
+            if(verbose) System.out.println("curr King Coord: " +  currKingCoord);
+            if(verbose) System.out.println("LOS: " + lineOfSights);
         }
     }
 
@@ -127,6 +157,7 @@ class ChessCheckTracker {
 
     boolean isAlliedKingChecked(){
         for(LineOfSight line: lineOfSights.values()){
+            if(verbose) System.out.println("CCT.iAKC; kingcolor: " + kingColor);
             if(line.isKingInSight(board)){
                 return true;
             }
@@ -141,30 +172,37 @@ class ChessCheckTracker {
      * @return
      */
     boolean isCoordAttacked(Coord coord){
+        if(verbose) System.out.println("isCoordAttacked: " + coord);
         for (Coord direction: knightDirections()) {
             Piece piece = board.pieceAt(coord.add(direction));
             if(piece instanceof Knight && piece.color != kingColor){
+                if(verbose) System.out.println("Knight attacks " + coord);
                 return true;
             }
         }
         for (Coord direction: queenDirections()) {
             for (int i = 1; true; i++) {
-                Coord pieceCoord = currKingCoord.add(direction.multiply(i));
-                if(board.coordInBoard(pieceCoord) || board.isAlliedPiece(pieceCoord)) break;
+                Coord pieceCoord = coord.add(direction.multiply(i));
+                if(pieceCoord.equals(currKingCoord));
+                else if(!board.coordInBoard(pieceCoord) || board.isAlliedPiece(pieceCoord)) break;
+                else if(!board.hasPieceAt(pieceCoord));
                 else if(i == 1 && board.pieceAt(pieceCoord) instanceof King){
                     return true;
-                }
-                else if(i == 1 && board.pieceAt(pieceCoord) instanceof Pawn){
+                }else if(i == 1 && board.pieceAt(pieceCoord) instanceof Pawn){
+                    if(verbose) System.out.println("Pawn at " + pieceCoord + " attacks " + coord);
                     Pawn pawn = (Pawn) board.pieceAt(pieceCoord);
                     if(pawn.takeDirection().contains(direction.multiply(-1))){
                         return true;
                     }
                 }else if(pieceMovesInDirection(pieceCoord, direction)){
+                    if(verbose) System.out.println(coord + " attacked by: " + board.pieceAt(pieceCoord) + " at " + pieceCoord);
                     return true;
                 }
+                if(board.hasPieceAt(pieceCoord) && !pieceCoord.equals(currKingCoord)) break;
             }
         }
 
+        if(verbose) System.out.println(coord + "not Attacked!");
         return false;
     }
 
@@ -189,7 +227,7 @@ class LineOfSight {
 
     @Override
     public String toString(){
-        return MessageFormat.format("{0}: {1}", pieceWithSight, lineOfSight);
+        return MessageFormat.format("LOS {0}: {1}", pieceWithSight, lineOfSight);
     }
 
 
