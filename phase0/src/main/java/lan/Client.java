@@ -10,8 +10,9 @@ public class Client {
     private BufferedWriter bufferedWriter;
     private String username;
 
-    public Client(Socket socket, String username) throws IOException {
-        this.socket = socket;
+
+    public Client(int port, String username) throws IOException {
+        this.socket = new Socket("localhost", port);;
         this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.username = username;
@@ -53,29 +54,28 @@ public class Client {
     }
 
     //Testing main
-    public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter your username for the group chat: ");
-        String username = scanner.nextLine();
-        //connecting to the server port 1234
-        Socket socket = new Socket("localhost", 1234);
-        Client client = new Client(socket, username);
-        client.sendMessage("");
-        String playersName = client.receiveMessage();
-        System.out.println("Players are " + playersName);
-
-        String[] names = playersName.split(" ");
-        if (names[0].equals(client.username)){
-            System.out.println("Type Message: ");
-            client.sendMessage(scanner.nextLine());
-            System.out.println(client.receiveMessage());
-        }
-        else{
-            System.out.println(client.receiveMessage());
-            client.sendMessage(scanner.nextLine());
-        }
-        client.closeSocketBuffered();
-    }
+//    public static void main(String[] args) throws IOException {
+//        Scanner scanner = new Scanner(System.in);
+//        System.out.println("Enter your username for the group chat: ");
+//        String username = scanner.nextLine();
+//        //connecting to the server port 1234
+//        Client client = new Client(1234, username);
+//        client.sendMessage("");
+//        String playersName = client.receiveMessage();
+//        System.out.println("Players are " + playersName);
+//
+//        String[] names = playersName.split(" ");
+//        if (names[0].equals(client.username)){
+//            System.out.println("Type Message: ");
+//            client.sendMessage(scanner.nextLine());
+//            System.out.println(client.receiveMessage());
+//        }
+//        else{
+//            System.out.println(client.receiveMessage());
+//            client.sendMessage(scanner.nextLine());
+//        }
+//        client.closeSocketBuffered();
+//    }
 
 }
 
