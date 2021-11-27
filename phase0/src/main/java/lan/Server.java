@@ -33,7 +33,10 @@ public class Server {
         String received = "";
         //loops until GameOver is sent by the Game
         while(!received.equals("GameOver")){
-            received = clientHandlers.get(i % numPlayers).receiveMessage();
+            int receiveFrom = i % numPlayers;
+            received = clientHandlers.get(receiveFrom).receiveMessage();
+            broadcastMessage(received);
+            received = clientHandlers.get(receiveFrom).receiveMessage();
             broadcastMessage(received);
             i++;
         }
@@ -69,7 +72,6 @@ public class Server {
         Server server = new Server();
         server.runServer(2, 1234);
     }
-
 }
 
 

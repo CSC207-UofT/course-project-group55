@@ -64,24 +64,35 @@ public class ChessGame {
      *      - Anything else will deselect the piece. <br>
      * @param coord     Coordinate to be selected.
      */
-    public void selectCoord(Coord coord){
+    public String selectCoord(Coord coord){
         // If a piece is currently selected
         if(currTurn.isOnSelectState()){
-            if(coord == currTurn.moveFrom) deselect();  // If not currPiece, Deselect currently selected piece
-            else if (board.isAlliedPiece(coord)) selectPieceAt(coord); // If not currPiece and AlliedPiece
-            else if (currLegalMoves.contains(coord)) movePiece(coord);
-            else deselect();
+            if(coord == currTurn.moveFrom) {
+                deselect();  // If not currPiece, Deselect currently selected piece
+                return "fail";
+            }
+            else if (board.isAlliedPiece(coord)) {
+                selectPieceAt(coord); // If not currPiece and AlliedPiece
+                return "moveFrom";
+            }
+            else if (currLegalMoves.contains(coord)) {
+                movePiece(coord);
+                return "moveTo";
+            }
+            else {
+                deselect();
+                return "fail";
+            }
         }
-
         // If no piece is selected, and there is an allied piece on the selected tile
         else if (board.hasPieceAt(coord) && board.isAlliedPiece(coord)) {
             selectPieceAt(coord);
             if(verbose) System.out.println(
                     "Selected piece: " + board.pieceAt(coord) + " " + currTurn.isOnSelectState());
+            return "moveFrom";
         }
-
         // If no piece is selected, and an empty or enemy piece is selected, do nothing.
-
+        return "fail";
     }
 
     public Set<int[]> getCurrLegalMoves(){
