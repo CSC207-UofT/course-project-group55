@@ -12,8 +12,9 @@ public class Server {
     ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 
     //Runs Server with numPlayers allowed at given port.
-    public boolean runServer(int numPlayers, int port) throws IOException {
+    public boolean runServer(int numPlayers, String strPort) throws IOException {
         Socket socket = null;
+        int port = Integer.parseInt(strPort);
         try{
             this.serverSocket = new ServerSocket(port);
         } catch (BindException e){
@@ -95,7 +96,7 @@ public class Server {
             System.out.println("Wrong! RE-Enter Four Digit Port Number");
             strPort = scanner.nextLine();
         }
-        if (!server.runServer(2, Integer.parseInt(strPort))){
+        if (!server.runServer(2, strPort)){
             System.out.println("The port is in use already");
         }
     }
