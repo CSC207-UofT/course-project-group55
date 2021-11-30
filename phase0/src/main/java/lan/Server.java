@@ -12,7 +12,6 @@ public class Server {
     ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 
     //Runs Server with numPlayers allowed at given port.
-    //TODO: Later work on if there already exists port number
     public boolean runServer(int numPlayers, int port) throws IOException {
         Socket socket = null;
         try{
