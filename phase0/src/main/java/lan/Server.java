@@ -1,19 +1,24 @@
 package lan;
 
 import java.io.*;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Server {
     ServerSocket serverSocket = null;
     ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 
     //Runs Server with numPlayers allowed at given port.
-    //TODO: Later work on if there already exists port number
-    public void runServer(int numPlayers, int port) throws IOException {
+    public boolean runServer(int numPlayers, int port) throws IOException {
         Socket socket = null;
-        this.serverSocket = new ServerSocket(port);
+        try{
+            this.serverSocket = new ServerSocket(port);
+        } catch (BindException e){
+            return false;
+        }
         String playerNames = "";
         ClientHandler clientHandler;
         //Get numPlayer's info
@@ -32,6 +37,7 @@ public class Server {
         int i = 0;
         String received = "";
         //loops until GameOver is sent by the Game
+        //TODO: Make sure it works with
         while(!received.equals("GameOver")){
             int receiveFrom = i % numPlayers;
             received = clientHandlers.get(receiveFrom).receiveMessage();
@@ -40,6 +46,7 @@ public class Server {
             broadcastMessage(received);
             i++;
         }
+        return true;
     }
 
     //Closes Server
@@ -59,18 +66,38 @@ public class Server {
     public void broadcastMessage(String message) throws IOException {
         String sentby = message.split(" ")[0];
         for (ClientHandler clientHandler : clientHandlers) {
-            //System.out.println(clientHandler.clientUsername + "'s Turn to receive message");
-            //System.out.println("The Message is sent by : " + sentby + " and received by " + clientHandler.clientUsername);
             if(!sentby.equals(clientHandler.clientUsername)){
                 clientHandler.sendMessage(message);
             }
         }
     }
 
+    //Check if the user's input is valid.
+    public boolean validInput(String strPort) {
+        try {
+            Integer.parseInt(strPort);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        if (strPort.length() == 4) {
+            return true;
+        }
+        return false;
+    }
+
     //testing Main
     public static void main(String[] args) throws IOException {
         Server server = new Server();
-        server.runServer(2, 1234);
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter Four Digit Port Number");
+        String strPort = scanner.nextLine();
+        while(!server.validInput(strPort)){
+            System.out.println("Wrong! RE-Enter Four Digit Port Number");
+            strPort = scanner.nextLine();
+        }
+        if (!server.runServer(2, Integer.parseInt(strPort))){
+            System.out.println("The port is in use already");
+        }
     }
 }
 
