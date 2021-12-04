@@ -6,6 +6,11 @@ import player.entity.Player;
 
 import java.util.List;
 
+/**
+* @Description: Depend on Dao layer for business persistence
+* @Author: Ang Li
+* @Date: 2021/12/5
+*/
 public class PlayerServiceImpl implements PlayerService {
     PlayerDao playerDao;
 
@@ -25,6 +30,11 @@ public class PlayerServiceImpl implements PlayerService {
         return playerDao.update(player);
     }
 
+    /**
+    * @Description: Delete the old user information and add one with new name
+    * @Param: [playerName, newName]
+    * @return: boolean
+    */
     @Override
     public boolean changeName(String playerName, String newName) {
         Player player = playerDao.getByName(playerName);

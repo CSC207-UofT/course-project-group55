@@ -1,5 +1,10 @@
 package player.entity;
 
+/**
+* @Description: Gust user, not necessary to be saved
+* @Author: Ang Li
+* @Date: 2021/12/5
+*/
 public class GustPlayer extends Player{
 
     public GustPlayer(String name) {

@@ -6,6 +6,11 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+* @Description: Use class serialization and file IO to do persistence of user's information
+* @Author: Ang Li
+* @Date: 2021/12/5
+*/
 public class PlayerDaoImpl implements PlayerDao {
     public static final String PLAYER_PERSISTENCE_ROOT_PATH = ".chess" + File.separator + "players";
     public static final String PLAYER_PERSISTENCE_SUFFIX_NAME = ".player";
@@ -16,6 +21,11 @@ public class PlayerDaoImpl implements PlayerDao {
         }
     }
 
+    /**
+    * @Description:  Add one user's information to file
+    * @Param: [player]
+    * @return: boolean
+    */
     @Override
     public boolean add(Player player) {
         if (player == null || ! player.isPersistenceNeeded()){
@@ -33,11 +43,21 @@ public class PlayerDaoImpl implements PlayerDao {
         }
     }
 
+    /**
+    * @Description:  Update one user's information in file
+    * @Param: [player]
+    * @return: boolean
+    */
     @Override
     public boolean update(Player player) {
         return add(player);
     }
 
+    /**
+    * @Description: Get one user from file by username
+    * @Param: [playerName]
+    * @return: player.entity.Player
+    */
     @Override
     public Player getByName(String playerName) {
         String playerFileName = playerName + PLAYER_PERSISTENCE_SUFFIX_NAME;
@@ -52,6 +72,11 @@ public class PlayerDaoImpl implements PlayerDao {
         }
     }
 
+    /**
+    * @Description: Delete one user's information in file
+    * @Param: [player]
+    * @return: boolean
+    */
     @Override
     public boolean delete(Player player) {
         String playerFileName = player.getName() + PLAYER_PERSISTENCE_SUFFIX_NAME;
@@ -59,6 +84,11 @@ public class PlayerDaoImpl implements PlayerDao {
         return new File(fileName).delete();
     }
 
+    /**
+    * @Description: Get all users in file
+    * @Param: []
+    * @return: java.util.List<player.entity.Player>
+    */
     @Override
     public List<Player> getAllPlayers() {
         ArrayList<Player> playerArrayList = new ArrayList<>();

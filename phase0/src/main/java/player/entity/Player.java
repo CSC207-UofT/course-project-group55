@@ -8,7 +8,12 @@ import java.util.Map;
 import java.util.Objects;
 
 import static chess.PieceRole.*;
-
+/**
+* @Description: This is an abstraction of the player class, and the two interfaces
+ * implemented are for data persistence and sorting of players, respectively
+* @Author: Ang Li
+* @Date: 2021/12/5
+*/
 public abstract class Player implements Serializable, Comparable<Player> {
     private String name;
     private int numWins;
@@ -25,6 +30,11 @@ public abstract class Player implements Serializable, Comparable<Player> {
         }
     }
 
+    /**
+    * @Description: Sort the user by their counts of win times
+    * @Param: [player]
+    * @return: int
+    */
     @Override
     public int compareTo(Player player) {
         return this.numWins - player.getNumWins();
@@ -42,6 +52,12 @@ public abstract class Player implements Serializable, Comparable<Player> {
                 '}';
     }
 
+    /**
+    * @Description:  This is mainly used to verify the login, if the username and
+     * password are the same as the stored player information, it will return true
+    * @Param: [o]
+    * @return: boolean
+    */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
