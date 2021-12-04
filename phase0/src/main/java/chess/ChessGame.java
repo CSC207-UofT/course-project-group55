@@ -16,7 +16,6 @@ public class ChessGame {
 
     public boolean verbose = false;
 
-
     /**
      * Generates an 'n' player Chess Game with custom board size and initial positions
      * @param players   Player that will participate
@@ -43,9 +42,20 @@ public class ChessGame {
         board = new Chessboard();
     }
 
-    public ChessGame(){
+    public ChessGame(String[] playerNames){
         playerColors = new HashMap<>();
+        for (int i = 0; i < playerColor.values().length; i++) {
+            playerColors.put(playerNames[i], playerColor.values()[i]);
+        }
         board = new Chessboard();
+    }
+
+    public ChessGame(String[] playerNames, String FEN){
+        playerColors = new HashMap<>();
+        for (int i = 0; i < playerColor.values().length; i++) {
+            playerColors.put(playerNames[i], playerColor.values()[i]);
+        }
+        board = new Chessboard(FEN);
     }
 
     public void runGame(Coord coord){
@@ -63,43 +73,24 @@ public class ChessGame {
      *      - Anything else will deselect the piece. <br>
      * @param coord     Coordinate to be selected.
      */
-    public String selectCoord(Coord coord){
+    public void selectCoord(Coord coord){
         // If a piece is currently selected
         if(currTurn.isOnSelectState()){
-            if(coord == currTurn.moveFrom) {
-                deselect();  // If not currPiece, Deselect currently selected piece
-                return "fail";
-            }
-            else if (board.isAlliedPiece(coord)) {
-                selectPieceAt(coord); // If not currPiece and AlliedPiece
-                return "moveFrom";
-            }
-            else if (currLegalMoves.contains(coord)) {
-                movePiece(coord);
-                return "moveTo";
-            }
-            else {
-                deselect();
-                return "fail";
-            }
+            if(coord == currTurn.moveFrom) deselect();  // If not currPiece, Deselect currently selected piece
+            else if (board.isAlliedPiece(coord)) selectPieceAt(coord); // If not currPiece and AlliedPiece
+            else if (currLegalMoves.contains(coord)) currTurn.moveTo = coord;
+            else deselect();
         }
+
         // If no piece is selected, and there is an allied piece on the selected tile
         else if (board.hasPieceAt(coord) && board.isAlliedPiece(coord)) {
             selectPieceAt(coord);
             if(verbose) System.out.println(
                     "Selected piece: " + board.pieceAt(coord) + " " + currTurn.isOnSelectState());
-            return "moveFrom";
         }
-        // If no piece is selected, and an empty or enemy piece is selected, do nothing.
-        return "fail";
-    }
 
-    public Set<int[]> getCurrLegalMoves(){
-        Set<int[]> moveSet = new HashSet<>();
-        for(Coord move: currLegalMoves){
-            moveSet.add(move.coords());
-        }
-        return moveSet;
+        // If no piece is selected, and an empty or enemy piece is selected, do nothing.
+
     }
 
     /**
@@ -122,14 +113,14 @@ public class ChessGame {
     Set<Coord> currLegalMoveSet(){
         Piece pieceToMove = board.pieceAt(currTurn.moveFrom);
         if(pieceToMove == null || pieceToMove instanceof Edge) return new HashSet<>();
-        return pieceToMove.legalMoveSet(currTurn.moveFrom, board);
+        return pieceToMove.legalMoveSet();
     }
 
-    private void movePiece(Coord coord){
-        currTurn.moveTo = coord;
-        ChessTurn newTurn;
-        newTurn = recordMove(currTurn.makeMove());
-        board.movePiece(newTurn);
+    void confirmTurn(){
+        if(currTurn.moveTo != null) {
+            board.movePiece(recordMove(currTurn.makeMove()));
+            currLegalMoves = new HashSet<>();
+        }
     }
 
     private ChessTurn recordMove(ChessTurn turn){
@@ -141,7 +132,8 @@ public class ChessGame {
      * the Server can access it.
      * @param move      ChessTurn obj that contains the turn number, piece moved from and to information.
      */
-    void movePiece(ChessTurn move){
+    void movePiece(ChessTurn move, String playerName){
+        if(playerColors.get(playerName) == board.currColor()) board.movePiece(move);
 
     }
 
@@ -163,5 +155,55 @@ public class ChessGame {
         return board.getBoard();
     }
 
+    public Set<Coord> getCurrLegalMoves(){
+        Set<Coord> moveSet = new HashSet<>(currLegalMoves);
+        return moveSet;
+    }
+
+    /**
+     * @return  null if no piece selected, Coord if piece is selected
+     */
+    public Coord currSelectedPiece(){
+        return currTurn.moveFrom;
+    }
+
+    public playerColor currColor(){
+        return board.currColor();
+    }
+
+    public boolean promoting(){
+        if(currTurn.moveFrom == null || currTurn.moveTo == null) return false;
+
+        if(board.pieceAt(currTurn.moveFrom) instanceof Pawn) {
+            Pawn pawn = (Pawn) board.pieceAt(currTurn.moveFrom);
+            return pawn.isPromoting(currTurn.moveTo);
+        }
+        return false;
+    }
+
+    public void promotePawnTo(char piece){
+        board.promoteToPiece = piece;
+    }
+
+    public boolean isChecked(){
+        return board.isKingChecked();
+    }
+
+    public Coord kingCoord(){
+        return board.currCheckTracker().alliedKingCoord();
+    }
+
+    //TODO
+    public boolean isGameOver(){
+        return false;
+    }
+
+    //TODO
+    public String gameOverMessage(){
+        return "Game Over!";
+    }
+
+
 
 }
+

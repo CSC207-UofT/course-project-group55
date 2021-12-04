@@ -11,15 +11,17 @@ public class Chessboard{
     final private String[] pieceSetup;
     final public int[] size;
 
-    private Map<Coord, Piece> state = new HashMap<>();
+    private Map<Coord, Piece> piecePosition = new HashMap<>();
     private playerColor turnColor;
-    private Set<Character> castling = new HashSet<>();
+    private CastlingTracker castling;
     Coord enPassantSquare;
     boolean isEnPassant = false;
     private int halfMoveClock;
     private int fullMoveNumber;
 
-    private Map<playerColor, ChessCheckTracker> checkTrackers = new EnumMap<>(playerColor.class);
+    private EnumMap<playerColor, ChessCheckTracker> checkTrackers = new EnumMap<>(playerColor.class);
+
+    char promoteToPiece = 'q';
 
     /**
      * Generates a Chessboard from the boardSetup String.
@@ -32,12 +34,14 @@ public class Chessboard{
         try{
             size = calculateBoardSize();
         }catch (InvalidFENException e){
+            e.printStackTrace();
             throw new AssertionError(e.getMessage());
         }
 
         try{
             populateBoard();
         }catch (InvalidFENException e){
+            e.printStackTrace();
             throw new AssertionError(e.getMessage());
         }
 
@@ -111,7 +115,7 @@ public class Chessboard{
 
                 // If tileState is an alphabet, then generate corresponding Piece
                 if(Character.isAlphabetic(tileState)) {
-                    state.put(currCoord, PieceFactory.newPiece(tileState));
+                    piecePosition.put(currCoord, PieceFactory.newPiece(this, tileState, currCoord));
                     currCoord = currCoord.add(1, 0);
                 }
 
@@ -129,7 +133,7 @@ public class Chessboard{
     private void setupBoardMisc(){
         turnColor = (boardSetup[1].equals("w")) ? playerColor.White: playerColor.Black;
 
-        for (char c: boardSetup[2].toCharArray()) if (c != '-') castling.add(c);
+        castling = new CastlingTracker(this, boardSetup[2]);
 
         if(!boardSetup[3].equals("-")){
             char[] coordSetup = boardSetup[3].toCharArray();
@@ -147,11 +151,8 @@ public class Chessboard{
     }
 
     private void setupCheckTrackers(){
-
-        System.out.println("Setting up CheckTrackers:");
         checkTrackers.put(currColor(), new ChessCheckTracker(this));
         switchTurns();
-        System.out.println("Next one:");
         checkTrackers.put(currColor(), new ChessCheckTracker(this));
         switchTurns();
         fullMoveNumber --;
@@ -164,16 +165,16 @@ public class Chessboard{
      * @return      Piece located at (x,y)
      */
     public Piece pieceAt(int x, int y){
-        return state.get(new Coord(x, y));
+        return piecePosition.get(new Coord(x, y));
     }
 
     public Piece pieceAt(Coord coord){
-        return state.get(coord);
+        return piecePosition.get(coord);
     }
 
 
     public boolean hasPieceAt(Coord coord){
-        return state.get(coord) != null && !(state.get(coord) instanceof Edge);
+        return piecePosition.get(coord) != null && !(piecePosition.get(coord) instanceof Edge);
     }
 
     public boolean hasPieceAt(int x, int y){
@@ -185,7 +186,7 @@ public class Chessboard{
      * @return          true if coord is within boardSize, and is not an Edge Piece
      */
     public boolean coordInBoard(Coord coord){
-        return !(state.get(coord) instanceof Edge)
+        return !(piecePosition.get(coord) instanceof Edge)
                 && size[0] > coord.x && coord.x >= 0
                 && size[1] > coord.y && coord.y >= 0;
     }
@@ -208,6 +209,7 @@ public class Chessboard{
 
         updateHalfMoveClock(move);
         updatePiecePositions(move);
+        castling.update();
         updateEnPassantSquare(move);
         switchTurns();
 
@@ -217,26 +219,25 @@ public class Chessboard{
         currCheckTracker().update(move, isEnPassant);
 
     }
-
-    private void updatePiecePositions(ChessTurn move){ //TODO: Make a method (Piece.move) for max OOP-ness
-        isEnPassant = false;
-        Piece pieceToMove = state.get(move.from);
-        removePiece(move.from);
-
-        pieceToMove.movePiece(this, move);
-    }
-
-    void placePiece(Coord moveTo, Piece movedPiece){
-        state.put(moveTo, movedPiece);
-    }
-
-    void removePiece(Coord coord){
-        state.remove(coord);
-    }
-
     private void updateHalfMoveClock(ChessTurn move){
         if (hasPieceAt(move.to) || pieceAt(move.from) instanceof Pawn) halfMoveClock = 0;
         else halfMoveClock++;
+    }
+
+    private void updatePiecePositions(ChessTurn move){
+        isEnPassant = false;
+        Piece pieceToMove = piecePosition.get(move.from);
+        removePiece(move.from);
+
+        pieceToMove.movePiece(move);
+    }
+
+    void placePiece(Coord moveTo, Piece movedPiece){
+        piecePosition.put(moveTo, movedPiece);
+    }
+
+    void removePiece(Coord coord){
+        piecePosition.remove(coord);
     }
 
     private void updateEnPassantSquare(ChessTurn move){
@@ -267,14 +268,26 @@ public class Chessboard{
         }
     }
 
+    void promotePawn(Pawn pawnToPromote){
+        removePiece(pawnToPromote.currCoord);
+        if(currColor().equals(playerColor.White)) promoteToPiece = Character.toUpperCase(promoteToPiece);
+        else promoteToPiece = Character.toLowerCase(promoteToPiece);
+
+        placePiece(
+                pawnToPromote.currCoord,
+                PieceFactory.newPiece(this, promoteToPiece, pawnToPromote.currCoord)
+        );
+        promoteToPiece = 'q';
+    }
+
     ChessCheckTracker currCheckTracker(){
         return checkTrackers.get(currColor());
     }
 
     public Map<Coord, Piece> getBoard(){
         Map<Coord, Piece> boardState = new HashMap<>();
-        for (Coord coord: state.keySet()) {
-            boardState.put(new Coord(coord.x, coord.y), this.state.get(coord).clone());
+        for (Coord coord: piecePosition.keySet()) {
+            boardState.put(new Coord(coord.x, coord.y), this.piecePosition.get(coord).clone());
         }
         return boardState;
     }
@@ -301,8 +314,8 @@ public class Chessboard{
         return turnColor;
     }
 
-    Set<Character> getCastlingRights(){
-        return castling;
+    Set<Coord> getCastlingRights(King king){
+        return castling.validCastleCoords(king);
     }
 
     boolean isEnPassantSquare(Coord coord){
@@ -324,8 +337,8 @@ public class Chessboard{
 
         char[][] pieceArray = new char[size[0]][size[1]];
 
-        for (Coord coord: state.keySet()) {
-            pieceArray[size[1] - 1 - coord.y][coord.x] = state.get(coord).FENChar();
+        for (Coord coord: piecePosition.keySet()) {
+            pieceArray[size[1] - 1 - coord.y][coord.x] = piecePosition.get(coord).FENChar();
         }
 
         // Piece part of FEN
@@ -355,13 +368,7 @@ public class Chessboard{
         else FENString.append("b");
         FENString.append(" ");
 
-        if(castling.size() == 0) FENString.append("-");
-        else {
-            if (castling.contains('K')) FENString.append("K");
-            if (castling.contains('Q')) FENString.append("Q");
-            if (castling.contains('k')) FENString.append("k");
-            if (castling.contains('q')) FENString.append("q");
-        }
+        FENString.append(castling.toString());
         FENString.append(" ");
 
         // enPassantSquare part of FEN
@@ -383,7 +390,6 @@ public class Chessboard{
     public String toString() {
         return getClass().getName() + " " + FEN();
     }
-
 
     boolean isKingChecked(){
         return currCheckTracker().isAlliedKingChecked();

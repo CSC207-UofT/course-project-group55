@@ -100,6 +100,10 @@ public final class Coord {
         return new Coord(this.x * scalar, this.y * scalar);
     }
 
+    Coord midPoint(Coord coord){
+        return new Coord((this.x + coord.x)/2, (this.y + coord.y)/2);
+    }
+
     /**
      * @return      higher number between x and y
      */

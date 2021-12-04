@@ -47,6 +47,7 @@ public class Main {
             System.out.println(moveC);
 
             game.selectCoord(moveC);
+            game.confirmTurn();
 
             System.out.println("Current FEN: " + game.board.FEN());
             if (game.board.isKingChecked()){

@@ -7,16 +7,18 @@ import java.util.List;
 import java.util.Set;
 
 public abstract class Piece implements Cloneable{
+    protected Chessboard board;
+    protected Coord currCoord;
     protected playerColor color;
     public playerColor color(){
         return color;
     }
 
-    Set<Coord> legalMoveSet(Coord pieceAt, Chessboard board){
+    Set<Coord> legalMoveSet(){
         Set<Coord> legalMoves = new HashSet<>();
         for (Coord direction: moveDirection()) {
             for (int i = 1; true; i++) {
-                Coord moveTo = pieceAt.add(direction.multiply(i));
+                Coord moveTo = currCoord.add(direction.multiply(i));
                 if(!board.coordInBoard(moveTo) || board.isAlliedPiece(moveTo)) break;
                 else legalMoves.add(moveTo);
                 if(board.hasPieceAt(moveTo)) break;
@@ -27,10 +29,28 @@ public abstract class Piece implements Cloneable{
 
     abstract Set<Coord> moveDirection();
 
-    void movePiece(Chessboard board, ChessTurn move) {
+    Set<Coord> takeDirection(){
+        return moveDirection();
+    }
 
+    boolean canMoveTo(Coord coord){
+        for (Coord direction: moveDirection()) {
+            if(coord.subtract(currCoord).isSameDirection(direction)){
+                for (int i = 1; true; i++) {
+                    Coord moveTo = currCoord.add(direction.multiply(i));
+                    if(!board.coordInBoard(moveTo) || board.isAlliedPiece(moveTo)) return false;
+                    else if (moveTo == coord) return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    void movePiece(ChessTurn move) {
         if (board.hasPieceAt(move.to)) board.removePiece(move.to);
         board.placePiece(move.to, this);
+        currCoord = move.to;
     }
 
     /**
@@ -75,22 +95,38 @@ public abstract class Piece implements Cloneable{
 
 class King extends Piece{
 
-    public King(playerColor color){
+    public King(Chessboard board, playerColor color, Coord coord){
+        this.board = board;
         this.color = color;
+        this.currCoord = coord;
     }
 
     @Override
-    Set<Coord> legalMoveSet(Coord pieceAt, Chessboard board){
+    Set<Coord> legalMoveSet(){
         Set<Coord> legalMoves = new HashSet<>();
 
         for (Coord direction: moveDirection()) {
-            Coord moveTo = pieceAt.add(direction);
+            Coord moveTo = currCoord.add(direction);
             if (board.coordInBoard(moveTo) && !board.isAlliedPiece(moveTo) && !board.isCoordAttacked(moveTo)) {
                 legalMoves.add(moveTo);
             }
         }
 
+        for (Coord castleTo: board.getCastlingRights(this)){
+            if (    !board.isKingChecked() &&
+                    !board.isCoordAttacked(castleTo) &&
+                    !board.isCoordAttacked(currCoord.midPoint(castleTo)) &&
+                    board.pieceAt(Corner.rookSq(castleTo)).canMoveTo(currCoord.midPoint(castleTo))
+            ) {
+                legalMoves.add(castleTo);
+            }
+        }
+
         return legalMoves;
+    }
+
+    private boolean isCoordAttacked(Coord coord){
+        return board.isCoordAttacked(coord);
     }
 
     Set<Coord> moveDirection(){
@@ -107,9 +143,18 @@ class King extends Piece{
     }
 
     @Override
-    void movePiece(Chessboard board, ChessTurn move) {
+    void movePiece(ChessTurn move) {
+        if (board.getCastlingRights(this).contains(move.to)){
+            board.placePiece(move.to, this);
+            Piece rook = board.pieceAt(Corner.rookSq(move.to));
+            if(rook instanceof Rook)
+                rook.movePiece(new ChessTurn(Corner.rookSq(move.to), move.to.midPoint(move.from), false));
+            else throw new AssertionError("Castling is active but rook is misplaced");
+        }
+
         if (board.hasPieceAt(move.to)) board.removePiece(move.to);
         board.placePiece(move.to, this);
+        currCoord = move.to;
 
         board.currCheckTracker().generateNewLineOfSights();
     }
@@ -118,8 +163,10 @@ class King extends Piece{
 
 class Queen extends Piece{
 
-    public Queen(playerColor color){
+    public Queen(Chessboard board, playerColor color, Coord coord){
+        this.board = board;
         this.color = color;
+        this.currCoord = coord;
     }
 
     Set<Coord> moveDirection(){
@@ -137,8 +184,10 @@ class Queen extends Piece{
 
 class Bishop extends Piece{
 
-    public Bishop(playerColor color){
+    public Bishop(Chessboard board, playerColor color, Coord coord){
+        this.board = board;
         this.color = color;
+        this.currCoord = coord;
     }
 
     Set<Coord> moveDirection(){
@@ -156,8 +205,10 @@ class Bishop extends Piece{
 
 class Rook extends Piece{
 
-    public Rook(playerColor color){
+    public Rook(Chessboard board, playerColor color, Coord coord){
+        this.board = board;
         this.color = color;
+        this.currCoord = coord;
     }
 
     Set<Coord> moveDirection(){
@@ -175,15 +226,17 @@ class Rook extends Piece{
 
 class Knight extends Piece{
 
-    public Knight(playerColor color){
+    public Knight(Chessboard board, playerColor color, Coord coord){
+        this.board = board;
         this.color = color;
+        this.currCoord = coord;
     }
 
     @Override
-    Set<Coord> legalMoveSet(Coord pieceAt, Chessboard board){
+    Set<Coord> legalMoveSet(){
         Set<Coord> legalMoves = new HashSet<>();
         for (Coord direction: moveDirection()) {
-            Coord moveTo = pieceAt.add(direction);
+            Coord moveTo = currCoord.add(direction);
             if (board.coordInBoard(moveTo) && !board.isAlliedPiece(moveTo)) legalMoves.add(moveTo);
         }
         return legalMoves;
@@ -217,25 +270,27 @@ class Knight extends Piece{
 
 class Pawn extends Piece{
 
-    public Pawn(playerColor color){
+    public Pawn(Chessboard board, playerColor color, Coord coord){
+        this.board = board;
         this.color = color;
+        this.currCoord = coord;
     }
 
     @Override
-    Set<Coord> legalMoveSet(Coord pieceAt, Chessboard board){
+    Set<Coord> legalMoveSet(){
         Set<Coord> legalMoves = new HashSet<>();
-        Coord moveTo = pieceAt.add(primaryMoveDirection());
+        Coord moveTo = currCoord.add(primaryMoveDirection());
 
         // See if pawn can move forward
-        int squaresForward = (atStartingSquare(pieceAt, board)) ? 2 : 1;
+        int squaresForward = (atStartingSquare()) ? 2 : 1;
         for (int i = 1; i <= squaresForward  ; i++) {
-            Coord moveTwo = pieceAt.add(primaryMoveDirection().multiply(i));
+            Coord moveTwo = currCoord.add(primaryMoveDirection().multiply(i));
             if(board.coordInBoard(moveTwo) && !board.hasPieceAt(moveTwo)) legalMoves.add(moveTwo);
         }
 
         // To test if any taking move is legal
         for (Coord takeDir: takeDirection()) {
-            Coord takeTo = pieceAt.add(takeDir);
+            Coord takeTo = currCoord.add(takeDir);
             if(board.coordInBoard(takeTo) && (board.isEnemyPiece(takeTo) || board.isEnPassantSquare(takeTo))) {
                 legalMoves.add(takeTo);
             }
@@ -256,6 +311,7 @@ class Pawn extends Piece{
         return new Coord(0, direction);
     }
 
+    @Override
     Set<Coord> takeDirection(){
         int direction = (color == playerColor.White) ? 1: -1;
 
@@ -265,7 +321,7 @@ class Pawn extends Piece{
     }
 
     @Override
-    void movePiece(Chessboard board, ChessTurn move) {
+    void movePiece(ChessTurn move) {
 
         if (board.hasPieceAt(move.to)){
             board.removePiece(move.to);
@@ -275,20 +331,32 @@ class Pawn extends Piece{
         }
 
         board.placePiece(move.to, this);
+        currCoord = move.to;
+
+        if(atPromoteSquare()){
+            board.promotePawn(this);
+        }
 
     }
 
-    private boolean atStartingSquare(Coord pieceAt, Chessboard board){
-        return !board.coordInBoard(pieceAt.subtract(primaryMoveDirection().multiply(2)));
+    private boolean atStartingSquare(){
+        return !board.coordInBoard(currCoord.subtract(primaryMoveDirection().multiply(2)));
     }
 
+    private boolean atPromoteSquare(){
+        return !board.coordInBoard(currCoord.add(primaryMoveDirection()));
+    }
 
+    boolean isPromoting(Coord moveTo){
+        return !board.coordInBoard(moveTo.add(primaryMoveDirection()));
+    }
 }
 
 
 class Edge extends Piece{
 
-    public Edge(playerColor color){
+    public Edge(){
+        this.board = null;
         this.color = null;
     }
 

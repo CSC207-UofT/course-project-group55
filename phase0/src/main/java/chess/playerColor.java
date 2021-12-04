@@ -5,6 +5,13 @@ package chess;
  */
 
 enum playerColor {
-    White,
-    Black
+    White("White"),
+    Black("Black");
+
+    public String string;
+
+    playerColor(String string){
+        this.string = string;
+    }
+
 }
