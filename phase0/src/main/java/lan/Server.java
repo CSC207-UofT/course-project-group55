@@ -34,7 +34,7 @@ public class Server {
         for (ClientHandler client : clientHandlers) {
             playerNames += " " + client.clientUsername;
         }
-        messageToAll(playerNames.strip());
+        messageToAll(playerNames.trim());
         int i = 0;
         String received = "";
         //loops until GameOver is sent by the Game

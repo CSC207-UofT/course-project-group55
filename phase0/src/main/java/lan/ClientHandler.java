@@ -14,7 +14,7 @@ public class ClientHandler {
         this.socket = socket;
         this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.clientUsername = bufferedReader.readLine().strip();
+        this.clientUsername = bufferedReader.readLine().trim();
     }
 
     public void sendMessage(String message) throws IOException {

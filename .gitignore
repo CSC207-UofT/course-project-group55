@@ -91,3 +91,7 @@ fabric.properties
 
 *.iml
 .chess
+./target
+./.idea
+course-project-group55.iml
+.gitignore
