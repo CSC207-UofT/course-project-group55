@@ -1,4 +1,4 @@
-package player;
+package player.entity;
 
 public class GustPlayer extends Player{
 
@@ -7,7 +7,7 @@ public class GustPlayer extends Player{
     }
 
     @Override
-    boolean isPersistenceNeeded() {
+    public boolean isPersistenceNeeded() {
         return false;
     }
 

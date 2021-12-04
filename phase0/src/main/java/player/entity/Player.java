@@ -1,4 +1,4 @@
-package player;
+package player.entity;
 
 import chess.PieceRole;
 
@@ -30,7 +30,7 @@ public abstract class Player implements Serializable, Comparable<Player> {
         return this.numWins - player.getNumWins();
     }
 
-    abstract boolean isPersistenceNeeded();
+    public abstract boolean isPersistenceNeeded();
 
     @Override
     public String toString() {

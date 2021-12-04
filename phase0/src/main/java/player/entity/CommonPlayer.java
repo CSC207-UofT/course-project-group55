@@ -1,4 +1,4 @@
-package player;
+package player.entity;
 
 public class CommonPlayer extends Player{
 
@@ -7,7 +7,7 @@ public class CommonPlayer extends Player{
     }
 
     @Override
-    boolean isPersistenceNeeded() {
+    public boolean isPersistenceNeeded() {
         return true;
     }
 }

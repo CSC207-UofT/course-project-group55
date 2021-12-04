@@ -1,4 +1,6 @@
-package player;
+package player.entity;
+
+import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 
 public class PlayerFactory {
 
@@ -6,8 +8,10 @@ public class PlayerFactory {
         switch (playerRole){
             case Gust:
                 return new GustPlayer(name);
-            default:
+            case Common:
                 return new CommonPlayer(name);
+            default:
+                throw new  ValueException("wrong player role type");
         }
     }
 }

@@ -1,4 +1,4 @@
-package player;
+package player.entity;
 
 public enum PlayerRole {
     Gust,
