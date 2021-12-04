@@ -12,7 +12,7 @@ public class Client {
 
 
     public Client(int port, String username) throws IOException {
-        this.socket = new Socket("localhost", port);;
+        this.socket = new Socket("localhost", port);
         this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.username = username;

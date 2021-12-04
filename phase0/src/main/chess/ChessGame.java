@@ -156,8 +156,7 @@ public class ChessGame {
     }
 
     public Set<Coord> getCurrLegalMoves(){
-        Set<Coord> moveSet = new HashSet<>(currLegalMoves);
-        return moveSet;
+        return new HashSet<>(currLegalMoves);
     }
 
     /**
