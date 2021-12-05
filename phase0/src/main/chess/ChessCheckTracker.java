@@ -108,15 +108,17 @@ class ChessCheckTracker {
         currKingCoord = alliedKingCoord();
         if(!(board.pieceAt(move.to) instanceof King)) {
             updateLineOfSightTo(move.to);
-            if(!move.to.subtract(currKingCoord).isSameDirection(move.from.subtract(currKingCoord)))
+            if(!currKingCoord.isCollinear(move.to, move.from))
                 updateLineOfSightTo(move.from);
             if(isEnPassant){
-                if(board.pieceAt(move.to) instanceof Pawn) {
-                    Pawn movedPawn = (Pawn) board.pieceAt(move.to);
-                    Coord enPassantSquare = move.to.subtract(movedPawn.primaryMoveDirection());
-                    if(!move.to.subtract(currKingCoord).isSameDirection(enPassantSquare.subtract(currKingCoord)))
-                        updateLineOfSightTo(enPassantSquare);
-                }else throw new AssertionError("Non-Pawn Piece activated En Passant");
+                if (!(board.pieceAt(move.to) instanceof Pawn)) {
+                    throw new AssertionError("Non-Pawn Piece activated En Passant");
+                }
+                Pawn movedPawn = (Pawn) board.pieceAt(move.to);
+                Coord enPassantSquare = move.to.subtract(movedPawn.primaryMoveDirection());
+                if(!(currKingCoord.isCollinear(move.to, enPassantSquare)))
+                    updateLineOfSightTo(enPassantSquare);
+
             }
             if(debug) System.out.println("updated: " + lineOfSights);
         }
@@ -165,6 +167,19 @@ class ChessCheckTracker {
         return false;
     }
 
+    /**
+     * Returns the LoS object that is responsible for pinning the piece onto the king.
+     * @param piece
+     * @return
+     */
+    List<LineOfSight> pins(Piece piece){
+        List<LineOfSight> pins = new ArrayList<>();
+
+        for (LineOfSight lOS : lineOfSights.values()) {
+            //if
+        }
+        return pins;
+    }
 
     /**
      * For the sole purpose of checking if a certain square is a square that the king can move into.
@@ -208,7 +223,10 @@ class ChessCheckTracker {
 
 }
 
-
+/**
+ * Line of Sight keeps track of the coords starting from the coord of the piece with the sight,
+ * until the square right before the king.
+ */
 class LineOfSight {
     Piece pieceWithSight;
     List<Coord> lineOfSight;
@@ -224,6 +242,19 @@ class LineOfSight {
         }
         return true;
     }
+
+    int sightBlockerCount(Chessboard board){
+        int count = 0;
+        for (int i = 1; i < lineOfSight.size(); i++) {
+            if(!board.hasPieceAt(lineOfSight.get(i))) count++;
+        }
+        return count;
+    }
+
+    boolean contains(Coord coord){
+        return lineOfSight.contains(coord);
+    }
+
 
     @Override
     public String toString(){

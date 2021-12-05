@@ -7,7 +7,9 @@ public class Main {
 
         Player p1 = new UserTemp("a");
         Player p2 = new UserTemp("b");
-        ChessGame game = new ChessGame(new Player[]{p1, p2});
+        ChessGame game = new ChessGame(new Player[]{p1, p2},
+                "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4");
+        //        "rnb1kbnr/pp1Npppp/8/1B6/7q/8/PPPPPBPP/R2QK1NR w KQkq - 0 1");
 
         game.verbose = true;
 
@@ -26,7 +28,7 @@ public class Main {
                 "g8", "f6",
                 "e4", "e5",
                 "d7", "d5",
-                "e5", "d6",
+                "e5", "d6"
         };
 
         String[] bongCloudExtended = new String[] {
@@ -37,10 +39,20 @@ public class Main {
                 "d2", "d3",
                 "d8", "e8",
                 "c1", "g5",
-                "e7", "d6",
+                "e7", "d6"
         };
 
-        for (String move: bongCloudExtended) {
+        String[] pinsAndBlocks = new String[] {
+                "f2", "e3",
+                "d7", "f6",
+                "e8", "d8"
+        };
+
+        String[] castling  = new String[] {
+                "e1", "g1"
+        };
+
+        for (String move: castling) {
             Coord moveC = new Coord(move);
             System.out.println(moveC);
 

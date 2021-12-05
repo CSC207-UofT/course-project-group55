@@ -13,6 +13,8 @@ public abstract class Piece implements Cloneable{
     }
 
     Set<Coord> legalMoveSet(){
+
+
         Set<Coord> legalMoves = new HashSet<>();
         for (Coord direction: moveDirection()) {
             for (int i = 1; true; i++) {
@@ -110,7 +112,13 @@ class King extends Piece{
             }
         }
 
+        System.out.println("Castling rights: " + board.getCastlingRights(this));
+
         for (Coord castleTo: board.getCastlingRights(this)){
+            System.out.println("!isKingChecked : " + !board.isKingChecked());
+            System.out.println("!isCoordAttacked : " + !board.isCoordAttacked(castleTo));
+            System.out.println("!isCoordAttacked : " + !board.isCoordAttacked(currCoord.midPoint(castleTo)));
+            System.out.println("Are Squares empty: " + board.pieceAt(Corner.rookSq(castleTo)).canMoveTo(currCoord.midPoint(castleTo)));
             if (    !board.isKingChecked() &&
                     !board.isCoordAttacked(castleTo) &&
                     !board.isCoordAttacked(currCoord.midPoint(castleTo)) &&
@@ -142,6 +150,7 @@ class King extends Piece{
 
     @Override
     void movePiece(ChessTurn move) {
+
         if (board.getCastlingRights(this).contains(move.to)){
             board.placePiece(move.to, this);
             Piece rook = board.pieceAt(Corner.rookSq(move.to));

@@ -2,7 +2,7 @@ package chess;
 
 import java.util.*;
 
-public class CastlingTracker {
+class CastlingTracker {
     List<Corner> castlingStates = new ArrayList<>();
     Chessboard board;
 
@@ -18,7 +18,7 @@ public class CastlingTracker {
         System.out.println("CastlingTracker" + castlingStates);
     }
 
-    void update(){ // Improvement: Somehow make the hardcoded coords not hardcoded
+    void update(){
         for (Corner corner:Corner.values()) {
             if(castlingStates.contains(corner)){
                 if(!(board.pieceAt(Corner.rookSqs.get(corner)) instanceof Rook)) castlingStates.remove(corner);
