@@ -56,6 +56,15 @@ public class PlayerController {
     }
 
     /**
+    * @Description: Update one user's information
+    * @Param: [player]
+    * @return: boolean
+    */
+    public static boolean update(Player player){
+        return playerService.update(player);
+    }
+
+    /**
     * @Description:  Change the password for one single user
     * @Param: [playerName, newPassword]
     * @return: boolean
