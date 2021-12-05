@@ -10,7 +10,12 @@ public class Client {
     private BufferedWriter bufferedWriter;
     private String username;
 
-
+    /**
+     * Creates Client instance initialized with port and username
+     *
+     * @param port used to connect to that certain port
+     * @param username name of the player
+     * */
     public Client(int port, String username) throws IOException {
         this.socket = new Socket("localhost", port);
         this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -18,23 +23,29 @@ public class Client {
         this.username = username;
     }
 
+    /**
+     * send given String, move, to the server
+     *
+     * @param move String that is sent to the server
+     * */
     public void sendMessage(String move) throws IOException {
         bufferedWriter.write(this.username + " " + move);
         bufferedWriter.newLine();
         bufferedWriter.flush();
     }
 
-    //Used to End Close Server
-    public void sendGameOver() throws IOException {
-        bufferedWriter.write("GameOver");
-        bufferedWriter.newLine();
-        bufferedWriter.flush();
-    }
-
+    /**
+     * receive message sent from the Server
+     *
+     * @return returns receive string
+     * */
     public String receiveMessage() throws IOException {
         return bufferedReader.readLine();
     }
 
+    /**
+     * closes all the Client-Lan related parameters
+     * */
     public void closeSocketBuffered() {
         try{
             //closing bufferedReader and Writer will close outputStreamWriter and InputStreamReader
@@ -51,6 +62,25 @@ public class Client {
         } catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Check if user inputted string is a valid port number
+     *
+     * @param strPort String your inputted as port number
+     * @return true if strPort is four digit
+     * @return false if strPort is not four digit (ex. string, not 4-digit, contains special character etc)
+     * */
+    public boolean validInput(String strPort) {
+        try {
+            Integer.parseInt(strPort);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        if (strPort.length() == 4) {
+            return true;
+        }
+        return false;
     }
 
     //Testing main

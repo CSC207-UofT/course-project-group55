@@ -11,7 +11,13 @@ public class Server {
     ServerSocket serverSocket = null;
     ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
 
-    //Runs Server with numPlayers allowed at given port.
+    /**
+     * User to runServer for two player chessGame.
+     * @param numPlayers used to accept no more than numPlayers to the server
+     * @param strPort used to set up server with given strPort
+     * @return false if given strPort is taken by another server.
+     * @return true fi given strPort is valid.
+     */
     public boolean runServer(int numPlayers, String strPort) throws IOException {
         Socket socket = null;
         int port = Integer.parseInt(strPort);
@@ -50,19 +56,29 @@ public class Server {
         return true;
     }
 
-    //Closes Server
+    /**
+     * Used to close Server
+     */
     public void closeServer() throws IOException {
         if (this.serverSocket != null){
             this.serverSocket.close();
         }
     }
-    //Sends Message to all clients in the Server
+
+    /**
+     * Used to message to all clients that are in ClientHander
+     * @param message string message to be sent to clients
+     */
     public void messageToAll(String message) throws IOException {
         for (ClientHandler clientHandler : clientHandlers) {
             clientHandler.sendMessage(message);
         }
     }
 
+    /**
+     * Used to send message to Client other than the Client who sent the message.
+     * @param message string message to be sent.
+     */
     //sends Message to all the players other then client itself.
     public void broadcastMessage(String message) throws IOException {
         String sentby = message.split(" ")[0];
@@ -73,7 +89,13 @@ public class Server {
         }
     }
 
-    //Check if the user's input is valid.
+    /**
+     * Check if user inputted string is a valid port number
+     *
+     * @param strPort String your inputted as port number
+     * @return true if strPort is four digit
+     * @return false if strPort is not four digit (ex. string, not 4-digit, contains special character etc)
+     * */
     public boolean validInput(String strPort) {
         try {
             Integer.parseInt(strPort);
