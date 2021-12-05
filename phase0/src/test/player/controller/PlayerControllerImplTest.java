@@ -50,6 +50,18 @@ public class PlayerControllerImplTest {
     }
 
     @Test
+    public void testUpdate(){
+        Player bob = PlayerFactory.newPlayer("Bob", PlayerRole.Common);
+        bob.setPassword("123456");
+        PlayerDaoImpl playerDao = new PlayerDaoImpl();
+        playerDao.add(bob);
+
+        bob.setPassword("123456abc");
+        PlayerController.update(bob);
+        assertEquals(bob, playerDao.getByName("Bob"));
+    }
+
+    @Test
     public void testGetAllPlayers(){
         int playerNums = 5;
         List<Player> playerList = new ArrayList<>();
