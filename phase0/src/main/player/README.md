@@ -1,10 +1,6 @@
-<p align="center" ><h1>Player and database</h1></p>
+<center><h2>Player and database</h2></center>
 
-<center>
-<h2>Player and database</h2>
-<br>
-<h4>Author: Ang Li</h4>
-</center> 
+<center><h4>Author: Ang Li</h4></center> 
 
 <h3>Clean Architecture</h3>
 
