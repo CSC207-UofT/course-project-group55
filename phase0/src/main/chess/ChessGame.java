@@ -116,7 +116,7 @@ public class ChessGame {
         return pieceToMove.legalMoveSet();
     }
 
-    void confirmTurn(){
+    public void confirmTurn(){
         if(currTurn.moveTo != null) {
             board.movePiece(recordMove(currTurn.makeMove()));
             currLegalMoves = new HashSet<>();
