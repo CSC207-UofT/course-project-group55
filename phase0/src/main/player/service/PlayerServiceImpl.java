@@ -1,7 +1,7 @@
 package player.service;
 
 import player.dao.PlayerDao;
-import player.dao.PlayerDaoImpl;
+import player.dao.PlayerDaoFileIoImpl;
 import player.entity.Player;
 
 import java.util.List;
@@ -15,7 +15,7 @@ public class PlayerServiceImpl implements PlayerService {
     PlayerDao playerDao;
 
     {
-        playerDao = new PlayerDaoImpl();
+        playerDao = new PlayerDaoFileIoImpl();
     }
 
     @Override

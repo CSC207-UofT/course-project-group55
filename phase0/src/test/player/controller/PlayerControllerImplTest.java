@@ -4,7 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import player.dao.PlayerDao;
-import player.dao.PlayerDaoImpl;
+import player.dao.PlayerDaoFileIoImpl;
 import player.entity.Player;
 import player.entity.PlayerFactory;
 import player.entity.PlayerRole;
@@ -20,7 +20,7 @@ public class PlayerControllerImplTest {
     @Before
     public void setValue(){
         savedPlayers = new ArrayList<>();
-        PlayerDaoImpl playerDao = new PlayerDaoImpl();
+        PlayerDaoFileIoImpl playerDao = new PlayerDaoFileIoImpl();
         for (Player player : PlayerController.getAllPlayers()) {
             playerDao.delete(player);
         }
@@ -30,7 +30,7 @@ public class PlayerControllerImplTest {
     public void testSignUp(){
         String playerName = "Bob";
         String password = "123456";
-        PlayerDao playerDao = new PlayerDaoImpl();
+        PlayerDao playerDao = new PlayerDaoFileIoImpl();
         assertNull(playerDao.getByName(playerName));
 
         PlayerController.singUp(playerName, password);
@@ -53,7 +53,7 @@ public class PlayerControllerImplTest {
     public void testUpdate(){
         Player bob = PlayerFactory.newPlayer("Bob", PlayerRole.Common);
         bob.setPassword("123456");
-        PlayerDaoImpl playerDao = new PlayerDaoImpl();
+        PlayerDaoFileIoImpl playerDao = new PlayerDaoFileIoImpl();
         playerDao.add(bob);
 
         bob.setPassword("123456abc");
@@ -107,7 +107,7 @@ public class PlayerControllerImplTest {
 
     @After
     public void cleanValue(){
-        PlayerDaoImpl playerDao = new PlayerDaoImpl();
+        PlayerDaoFileIoImpl playerDao = new PlayerDaoFileIoImpl();
         for (Player player : PlayerController.getAllPlayers()) {
             playerDao.delete(player);
         }
