@@ -21,8 +21,8 @@ class CastlingTracker {
     void update(){
         for (Corner corner:Corner.values()) {
             if(castlingStates.contains(corner)){
-                if(!(board.pieceAt(Corner.rookSqs.get(corner)) instanceof Rook)) castlingStates.remove(corner);
-                else if(!(board.pieceAt(Corner.kingSqs.get(corner)) instanceof Rook)) castlingStates.remove(corner);
+                if(!(board.pieceAt(corner.rookSqs) instanceof Rook)) castlingStates.remove(corner);
+                else if(!(board.pieceAt(corner.kingSqs) instanceof King)) castlingStates.remove(corner);
             }
         }
 
@@ -31,7 +31,7 @@ class CastlingTracker {
     Set<Coord> validCastleCoords(King king){
         Set<Coord> coords = new HashSet<>();
         for (Corner corner: Corner.color.get(king.color())) {
-            coords.add(Corner.castlingSqs.get(corner));
+            coords.add(corner.castlingSqs);
         }
 
         return coords;
@@ -55,27 +55,29 @@ class CastlingTracker {
 }
 
 enum Corner {
-    K ("K"),
-    Q ("Q"),
-    k ("k"),
-    q ("q");
+    K ("K", new Coord("g1"), new Coord("h1"), new Coord("e1")),
+    Q ("Q", new Coord("c1"), new Coord("a1"), new Coord("e1")),
+    k ("k", new Coord("g7"), new Coord("h8"), new Coord("e8")),
+    q ("q", new Coord("c7"), new Coord("a8"), new Coord("e8"));
 
     final String string;
+    final Coord castlingSqs;
+    final Coord rookSqs;
+    final Coord kingSqs;
 
-    static EnumMap<playerColor, EnumSet<Corner>> color = new EnumMap<>(playerColor.class);
-    static EnumMap<Corner, Coord> castlingSqs = new EnumMap<>(Corner.class);
-    static EnumMap<Corner, Coord> rookSqs = new EnumMap<>(Corner.class);
-    static EnumMap<Corner, Coord> kingSqs = new EnumMap<>(Corner.class);
-
+    final static EnumMap<playerColor, EnumSet<Corner>> color = new EnumMap<>(playerColor.class);
     static {setupEnumMaps();}
 
-    Corner(String string){
+    Corner(String string, Coord castlingSqs, Coord rookSqs, Coord kingSqs){
         this.string = string;
+        this.castlingSqs = castlingSqs;
+        this.rookSqs = rookSqs;
+        this.kingSqs = kingSqs;
     }
 
     static Coord rookSq(Coord castleSq){
         for (Corner corner: Corner.values()) {
-            if(castlingSqs.get(corner).equals(castleSq)) return rookSqs.get(corner);
+            if(corner.castlingSqs.equals(castleSq)) return corner.rookSqs;
         }
         throw new AssertionError("invalid square to castle to");
     }
@@ -83,22 +85,9 @@ enum Corner {
     private static void setupEnumMaps(){
         color.put(playerColor.White, EnumSet.of(Corner.K, Corner.Q));
         color.put(playerColor.Black, EnumSet.of(Corner.k, Corner.q));
-
-        castlingSqs.put(K, new Coord("g1"));
-        castlingSqs.put(Q, new Coord("c1"));
-        castlingSqs.put(k, new Coord("g7"));
-        castlingSqs.put(q, new Coord("c7"));
-
-        rookSqs.put(K, new Coord("h1"));
-        rookSqs.put(Q, new Coord("a1"));
-        rookSqs.put(k, new Coord("h8"));
-        rookSqs.put(q, new Coord("a8"));
-
-        kingSqs.put(K, new Coord("e1"));
-        kingSqs.put(Q, new Coord("e1"));
-        kingSqs.put(k, new Coord("e8"));
-        kingSqs.put(q, new Coord("e8"));
     }
+
+
 
 }
 

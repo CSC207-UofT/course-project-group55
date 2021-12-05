@@ -228,8 +228,6 @@ public class Chessboard{
     private void updatePiecePositions(ChessTurn move){
         isEnPassant = false;
         Piece pieceToMove = piecePosition.get(move.from);
-        removePiece(move.from);
-
         pieceToMove.movePiece(move);
     }
 

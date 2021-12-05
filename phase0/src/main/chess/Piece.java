@@ -39,7 +39,8 @@ public abstract class Piece implements Cloneable{
                 for (int i = 1; true; i++) {
                     Coord moveTo = currCoord.add(direction.multiply(i));
                     if(!board.coordInBoard(moveTo) || board.isAlliedPiece(moveTo)) return false;
-                    else if (moveTo == coord) return true;
+                    else if (moveTo.equals(coord)) return true;
+                    else if (board.isEnemyPiece(moveTo)) return false;
                 }
             }
         }
@@ -48,6 +49,7 @@ public abstract class Piece implements Cloneable{
 
 
     void movePiece(ChessTurn move) {
+        board.removePiece(currCoord);
         if (board.hasPieceAt(move.to)) board.removePiece(move.to);
         board.placePiece(move.to, this);
         currCoord = move.to;
@@ -76,7 +78,7 @@ public abstract class Piece implements Cloneable{
     @Override
     public String toString() {
         return getClass().getName() + MessageFormat.format(
-                " {0}", color);
+                " {0} at {1}", color, currCoord);
     }
 
     @Override
@@ -150,6 +152,7 @@ class King extends Piece{
 
     @Override
     void movePiece(ChessTurn move) {
+        board.removePiece(currCoord);
 
         if (board.getCastlingRights(this).contains(move.to)){
             board.placePiece(move.to, this);
@@ -329,6 +332,7 @@ class Pawn extends Piece{
 
     @Override
     void movePiece(ChessTurn move) {
+        board.removePiece(currCoord);
 
         if (board.hasPieceAt(move.to)){
             board.removePiece(move.to);
