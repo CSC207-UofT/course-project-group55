@@ -4,7 +4,7 @@ package chess;
  *  This package was coded such that the number of players
  */
 
-enum playerColor {
+public enum playerColor {
     White("White"),
     Black("Black");
 
