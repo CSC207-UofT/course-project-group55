@@ -13,12 +13,12 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class PlayerDaoImplTest {
-    PlayerDaoImpl playerDao;
+    PlayerDaoFileIoImpl playerDao;
     List<Player> savedPlayers;
 
     @Before
     public void setValue(){
-        playerDao = new PlayerDaoImpl();
+        playerDao = new PlayerDaoFileIoImpl();
         savedPlayers = new ArrayList<>();
         for (Player player : playerDao.getAllPlayers()) {
             playerDao.delete(player);

@@ -11,7 +11,7 @@ import java.util.List;
 * @Author: Ang Li
 * @Date: 2021/12/5
 */
-public class PlayerDaoImpl implements PlayerDao {
+public class PlayerDaoFileIoImpl implements PlayerDao {
     public static final String PLAYER_PERSISTENCE_ROOT_PATH = ".chess" + File.separator + "players";
     public static final String PLAYER_PERSISTENCE_SUFFIX_NAME = ".player";
     static {
