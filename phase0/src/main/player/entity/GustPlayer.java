@@ -7,7 +7,6 @@ package player.entity;
 */
 public class GustPlayer extends Player{
 
-
     protected GustPlayer(String name) {
         super(name);
     }

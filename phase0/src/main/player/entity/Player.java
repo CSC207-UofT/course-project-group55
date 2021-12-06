@@ -44,8 +44,6 @@ public abstract class Player implements Serializable, Comparable<Player> {
         }
     }
 
-
-
     /**
     * @Description: Sort the user by their counts of win times
     * @Param: [player]

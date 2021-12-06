@@ -5,19 +5,19 @@
 <h3>Clean Architecture</h3>
 
 - Controller (Gateway) 
-  - Location: player/controller/PlayerController
+  - Location: `player/controller/PlayerController`
   - Forwarding and responding to external requests using a service (PlayerService)
 
 - Service (Use Cases):
-  - Location: player/service/PlayerService
+  - Location: `player/service/PlayerService`
   - Integrate several database operation(add, delete, update, select) into a specific service, and the rules of the service are defined here
 
 - Dao (Data Access Object):
-  - Location: player/dao/PlayerDao
+  - Location: `player/dao/PlayerDao`
   - Do basic persistence operations, by connecting to MySQL databases(PlayerDaoMysqlImpl) or using serialization and deserialization to do file IO(PlayerDaoFileIoImpl)
 
 - Entity (User -> Player)
-  - Location: player/entity/Player
+  - Location: `player/entity/Player`
   - The player's entity class, which defines the properties that the player has
 
 <h3>SOLID Principles</h3>
@@ -46,7 +46,7 @@
 
 - Usage: Factory Pattern
 
-- Location： player/entity/PlayerFactory
+- Location： `player/entity/PlayerFactory`
 
 - Explanation: This factory is used to instantiate two different player subclasses
 
@@ -57,15 +57,15 @@
 
 - Location
 
-  - test/player/controller/PlayerControllerImplTest 
+  - `test/player/controller/PlayerControllerImplTest`
     - Test Methods: signIn, signUp, update, getAllPlayers, changePassword, changeName 
     - Test Passed: 6 of 6 tests
   
-  - test/player/service/PlayerServiceImplTest
+  - `test/player/service/PlayerServiceImplTest`
     - Test Method: getAllPlayers, changePassword, changeName
     - Test Passed: 3 of 3 tests
   
-  - test/player/dao/PlayerDaoImplTest
+  - `test/player/dao/PlayerDaoImplTest`
     - Test Methods: add, getByName, delete, update
     - Test Passed: 4 of 4 tests
 
