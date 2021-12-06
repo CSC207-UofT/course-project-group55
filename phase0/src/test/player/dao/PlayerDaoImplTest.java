@@ -17,7 +17,7 @@ public class PlayerDaoImplTest {
     List<Player> savedPlayers;
 
     @Before
-    public void setValue(){
+    public void setValue() {
         playerDao = new PlayerDaoFileIoImpl();
         savedPlayers = new ArrayList<>();
         for (Player player : playerDao.getAllPlayers()) {
@@ -26,7 +26,7 @@ public class PlayerDaoImplTest {
     }
 
     @Test
-    public void testAdd(){
+    public void testAdd() {
         Player bob = PlayerFactory.newPlayer("Bob", PlayerRole.Common);
         boolean isBobSaved = playerDao.add(bob);
         assertTrue(isBobSaved);
@@ -40,7 +40,7 @@ public class PlayerDaoImplTest {
 
 
     @Test
-    public void testUpdate(){
+    public void testUpdate() {
         Player bob = PlayerFactory.newPlayer("Bob", PlayerRole.Common);
         bob.setPassword("123456");
         playerDao.add(bob);
@@ -51,7 +51,7 @@ public class PlayerDaoImplTest {
     }
 
     @Test
-    public void testGetByName(){
+    public void testGetByName() {
         Player cindy = PlayerFactory.newPlayer("Cindy", PlayerRole.Common);
         cindy.setPassword("123456abc");
         playerDao.add(cindy);
@@ -60,7 +60,7 @@ public class PlayerDaoImplTest {
     }
 
     @Test
-    public void testDelete(){
+    public void testDelete() {
         Player bob = PlayerFactory.newPlayer("Bob", PlayerRole.Common);
         playerDao.add(bob);
         playerDao.delete(bob);
@@ -68,7 +68,7 @@ public class PlayerDaoImplTest {
     }
 
     @After
-    public void cleanValue(){
+    public void cleanValue() {
         for (Player savedPlayer : savedPlayers) {
             playerDao.delete(savedPlayer);
         }

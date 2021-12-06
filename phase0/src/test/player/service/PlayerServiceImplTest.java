@@ -17,16 +17,16 @@ public class PlayerServiceImplTest {
     List<Player> savedPlayers;
 
     @Before
-    public void setValue(){
+    public void setValue() {
         playerService = new PlayerServiceImpl();
         savedPlayers = new ArrayList<>();
-        for (Player player: playerService.getAllPlayers()){
+        for (Player player : playerService.getAllPlayers()) {
             playerService.delete(player);
         }
     }
 
     @Test
-    public void testGetAllPlayers(){
+    public void testGetAllPlayers() {
         int playerNums = 5;
         List<Player> playerList = new ArrayList<>();
         for (int i = 0; i < playerNums; i++) {
@@ -41,7 +41,7 @@ public class PlayerServiceImplTest {
     }
 
     @Test
-    public void testChangePassword(){
+    public void testChangePassword() {
         Player bob = PlayerFactory.newPlayer("Bob", PlayerRole.Common);
         bob.setPassword("123456");
         playerService.add(bob);
@@ -56,8 +56,8 @@ public class PlayerServiceImplTest {
     }
 
     @Test
-    public void testChangeName(){
-        Player bob = PlayerFactory.newPlayer("Bob", "123456",PlayerRole.Common);
+    public void testChangeName() {
+        Player bob = PlayerFactory.newPlayer("Bob", "123456", PlayerRole.Common);
         playerService.add(bob);
 
         String newName = "Bob-NewName";
@@ -70,7 +70,7 @@ public class PlayerServiceImplTest {
     }
 
     @After
-    public void cleanValue(){
+    public void cleanValue() {
         for (Player savedPlayer : savedPlayers) {
             playerService.delete(savedPlayer);
         }

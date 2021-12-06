@@ -18,7 +18,7 @@ public class PlayerControllerImplTest {
     List<Player> savedPlayers;
 
     @Before
-    public void setValue(){
+    public void setValue() {
         savedPlayers = new ArrayList<>();
         PlayerDaoFileIoImpl playerDao = new PlayerDaoFileIoImpl();
         for (Player player : PlayerController.getAllPlayers()) {
@@ -27,7 +27,7 @@ public class PlayerControllerImplTest {
     }
 
     @Test
-    public void testSignUp(){
+    public void testSignUp() {
         String playerName = "Bob";
         String password = "123456";
         PlayerDao playerDao = new PlayerDaoFileIoImpl();
@@ -39,7 +39,7 @@ public class PlayerControllerImplTest {
     }
 
     @Test
-    public void testSignIn(){
+    public void testSignIn() {
         assertFalse(PlayerController.signIn("Bob", null));
         assertFalse(PlayerController.signIn(null, "123456"));
 
@@ -50,7 +50,7 @@ public class PlayerControllerImplTest {
     }
 
     @Test
-    public void testUpdate(){
+    public void testUpdate() {
         Player bob = PlayerFactory.newPlayer("Bob", PlayerRole.Common);
         bob.setPassword("123456");
         PlayerDaoFileIoImpl playerDao = new PlayerDaoFileIoImpl();
@@ -62,7 +62,7 @@ public class PlayerControllerImplTest {
     }
 
     @Test
-    public void testGetAllPlayers(){
+    public void testGetAllPlayers() {
         int playerNums = 5;
         List<Player> playerList = new ArrayList<>();
         for (int i = 0; i < playerNums; i++) {
@@ -78,7 +78,7 @@ public class PlayerControllerImplTest {
     }
 
     @Test
-    public void testChangePassword(){
+    public void testChangePassword() {
         String playerName = "Bob";
         String password = "123456";
         PlayerController.singUp(playerName, password);
@@ -91,7 +91,7 @@ public class PlayerControllerImplTest {
     }
 
     @Test
-    public void testChangeName(){
+    public void testChangeName() {
         String playerName = "Bob";
         String password = "123456";
         PlayerController.singUp(playerName, password);
@@ -104,16 +104,13 @@ public class PlayerControllerImplTest {
     }
 
 
-
     @After
-    public void cleanValue(){
+    public void cleanValue() {
         PlayerDaoFileIoImpl playerDao = new PlayerDaoFileIoImpl();
         for (Player player : PlayerController.getAllPlayers()) {
             playerDao.delete(player);
         }
     }
-
-
 
 
 }

@@ -12,7 +12,7 @@ import java.util.List;
  * @Date: 2021/12/5
  */
 public class PlayerServiceImpl implements PlayerService {
-    PlayerDao playerDao;
+    final PlayerDao playerDao;
 
     {
         playerDao = new PlayerDaoFileIoImpl();
