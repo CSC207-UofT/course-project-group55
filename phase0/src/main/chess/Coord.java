@@ -113,9 +113,14 @@ public final class Coord {
         return this.rotateCW().dotProduct(other) == 0 && this.dotProduct(other) > 0;
     }
 
+    public boolean isCollinear(Coord other, Coord another){
+        return other.subtract(this).isSameDirection(another.subtract(this));
+    }
+
     /**
      * @return      returns a Coord(Vector) that is Clockwise rotated by 90 degrees.
      */
+    @SuppressWarnings("SuspiciousNameCombination")
     private Coord rotateCW(){
         return new Coord(y, -x);
     }

@@ -219,6 +219,7 @@ public class Chessboard{
         currCheckTracker().update(move, isEnPassant);
 
     }
+
     private void updateHalfMoveClock(ChessTurn move){
         if (hasPieceAt(move.to) || pieceAt(move.from) instanceof Pawn) halfMoveClock = 0;
         else halfMoveClock++;
@@ -227,8 +228,6 @@ public class Chessboard{
     private void updatePiecePositions(ChessTurn move){
         isEnPassant = false;
         Piece pieceToMove = piecePosition.get(move.from);
-        removePiece(move.from);
-
         pieceToMove.movePiece(move);
     }
 
