@@ -11,12 +11,12 @@ import java.util.Objects;
 
 /**
  * @Description: This Controller is used to forward business requirements related to
- * the Player, and is a control class similar to the one used to respond to the url
+ * the Player, and is a control class similar to the one used to respond to the url.
  * @Author: Ang Li
  * @Date: 2021/12/5
  */
 public class PlayerController {
-    private static PlayerService playerService;
+    private static final PlayerService playerService;
 
     static {
         playerService = new PlayerServiceImpl();
@@ -29,20 +29,17 @@ public class PlayerController {
      */
     public static boolean signIn(String playerName, String password) {
         Player player = playerService.getByName(playerName);
-        if (player != null && Objects.equals(player.getPassword(), password)) {
-            return true;
-        }
-        return false;
+        return player != null && Objects.equals(player.getPassword(), password);
     }
 
     /**
-    * @Description: Enter the username and password, save the user to the database
-    * @Param: [playerName, password]
-    * @return: boolean
-    */
+     * @Description: Enter the username and password, save the user to the database
+     * @Param: [playerName, password]
+     * @return: boolean
+     */
     public static boolean singUp(String playerName, String password) {
         Player player = PlayerFactory.newPlayer(playerName, password, PlayerRole.Common);
-        if (playerName == null || playerName.length() == 0 || playerService.getByName(playerName) != null){
+        if (playerName == null || playerName.length() == 0 || playerService.getByName(playerName) != null) {
             // This name is the player's nickname and no duplication is allowed
             return false;
         }
@@ -50,37 +47,37 @@ public class PlayerController {
     }
 
     /**
-    * @Description: Get all saved users
-    * @Param: []
-    * @return: java.util.List<player.entity.Player>
-    */
+     * @Description: Get all saved users
+     * @Param: []
+     * @return: java.util.List<player.entity.Player>
+     */
     public static List<Player> getAllPlayers() {
         return playerService.getAllPlayers();
     }
 
     /**
-    * @Description: Update one user's information
-    * @Param: [player]
-    * @return: boolean
-    */
-    public static boolean update(Player player){
+     * @Description: Update one user's information
+     * @Param: [player]
+     * @return: boolean
+     */
+    public static boolean update(Player player) {
         return playerService.update(player);
     }
 
     /**
-    * @Description:  Change the password for one single user
-    * @Param: [playerName, newPassword]
-    * @return: boolean
-    */
+     * @Description: Change the password for one single user
+     * @Param: [playerName, newPassword]
+     * @return: boolean
+     */
     public static boolean changePassword(String playerName, String newPassword) {
         return playerService.changePassword(playerName, newPassword);
     }
 
     /**
-    * @Description:  Change the username for one single user
-    * @Param: [playerName, newName]
-    * @return: boolean
-    */
+     * @Description: Change the username for one single user
+     * @Param: [playerName, newName]
+     * @return: boolean
+     */
     public static boolean changeName(String playerName, String newName) {
         return playerService.changeName(playerName, newName);
     }
