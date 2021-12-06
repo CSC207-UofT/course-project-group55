@@ -141,10 +141,6 @@ class King extends Piece{
         System.out.println("Castling rights: " + board.getCastlingRights(this));
 
         for (Coord castleTo: board.getCastlingRights(this)){
-            System.out.println("!isKingChecked : " + !board.isKingChecked());
-            System.out.println("!isCoordAttacked : " + !board.isCoordAttacked(castleTo));
-            System.out.println("!isCoordAttacked : " + !board.isCoordAttacked(currCoord.midPoint(castleTo)));
-            System.out.println("Are Squares empty: " + board.pieceAt(Corner.rookSq(castleTo)).canMoveTo(currCoord.midPoint(castleTo)));
             if (    !board.isKingChecked() &&
                     !board.isCoordAttacked(castleTo) &&
                     !board.isCoordAttacked(currCoord.midPoint(castleTo)) &&

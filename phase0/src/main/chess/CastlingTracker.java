@@ -57,8 +57,8 @@ class CastlingTracker {
 enum Corner {
     K ("K", new Coord("g1"), new Coord("h1"), new Coord("e1")),
     Q ("Q", new Coord("c1"), new Coord("a1"), new Coord("e1")),
-    k ("k", new Coord("g7"), new Coord("h8"), new Coord("e8")),
-    q ("q", new Coord("c7"), new Coord("a8"), new Coord("e8"));
+    k ("k", new Coord("g8"), new Coord("h8"), new Coord("e8")),
+    q ("q", new Coord("c8"), new Coord("a8"), new Coord("e8"));
 
     final String string;
     final Coord castlingSqs;
