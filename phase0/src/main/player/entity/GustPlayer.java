@@ -7,8 +7,13 @@ package player.entity;
 */
 public class GustPlayer extends Player{
 
-    public GustPlayer(String name) {
+
+    protected GustPlayer(String name) {
         super(name);
+    }
+
+    protected GustPlayer(String name, String password) {
+        super(name, password);
     }
 
     @Override

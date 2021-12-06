@@ -11,6 +11,10 @@ public class CommonPlayer extends Player{
         super(name);
     }
 
+    protected CommonPlayer(String name, String password) {
+        super(name, password);
+    }
+
     @Override
     public boolean isPersistenceNeeded() {
         return true;

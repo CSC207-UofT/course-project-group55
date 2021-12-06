@@ -41,8 +41,11 @@ public class PlayerController {
     * @return: boolean
     */
     public static boolean singUp(String playerName, String password) {
-        Player player = PlayerFactory.newPlayer(playerName, PlayerRole.Common);
-        player.setPassword(password);
+        Player player = PlayerFactory.newPlayer(playerName, password, PlayerRole.Common);
+        if (playerName == null || playerName.length() == 0 || playerService.getByName(playerName) != null){
+            // This name is the player's nickname and no duplication is allowed
+            return false;
+        }
         return playerService.add(player);
     }
 

@@ -57,8 +57,7 @@ public class PlayerServiceImplTest {
 
     @Test
     public void testChangeName(){
-        Player bob = PlayerFactory.newPlayer("Bob", PlayerRole.Common);
-        bob.setPassword("123456");
+        Player bob = PlayerFactory.newPlayer("Bob", "123456",PlayerRole.Common);
         playerService.add(bob);
 
         String newName = "Bob-NewName";
