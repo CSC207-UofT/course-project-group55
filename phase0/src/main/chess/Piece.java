@@ -2,6 +2,7 @@ package chess;
 
 import java.text.MessageFormat;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public abstract class Piece implements Cloneable{
@@ -13,14 +14,37 @@ public abstract class Piece implements Cloneable{
     }
 
     Set<Coord> legalMoveSet(){
-
-
         Set<Coord> legalMoves = new HashSet<>();
+        boolean isPinOrCheck = false;
+        Set<Coord> lineWithCheck = new HashSet<>();
+        Set<Coord> lineWithPin = new HashSet<>();
+
+        List<LineOfSight> checks = board.currChecks;
+        System.out.println("checks.size(): " + checks.size() + " at " + currCoord);
+        if(checks.size() >= 2) return legalMoves;
+        else if(checks.size() == 1){
+            lineWithCheck = checks.get(0).coords();
+            isPinOrCheck = true;
+        }
+
+        List<LineOfSight> pins = board.currPins;
+        for(LineOfSight line: pins){
+            if(line.contains(currCoord)){
+                lineWithPin = line.coords();
+                isPinOrCheck = true;
+            }
+        }
+
         for (Coord direction: moveDirection()) {
             for (int i = 1; true; i++) {
                 Coord moveTo = currCoord.add(direction.multiply(i));
                 if(!board.coordInBoard(moveTo) || board.isAlliedPiece(moveTo)) break;
-                else legalMoves.add(moveTo);
+                else if(!isPinOrCheck) legalMoves.add(moveTo);
+                else if((lineWithCheck.contains(moveTo) || lineWithCheck.isEmpty()) &&
+                        (lineWithPin.contains(moveTo) || lineWithPin.isEmpty())
+                ){
+                    legalMoves.add(moveTo);
+                }
                 if(board.hasPieceAt(moveTo)) break;
             }
         }
@@ -245,9 +269,33 @@ class Knight extends Piece{
     @Override
     Set<Coord> legalMoveSet(){
         Set<Coord> legalMoves = new HashSet<>();
+        boolean isPinOrCheck = false;
+        Set<Coord> lineWithCheck = new HashSet<>();
+        Set<Coord> lineWithPin = new HashSet<>();
+
+        List<LineOfSight> checks = board.currChecks;
+        if(checks.size() >= 2) return legalMoves;
+        else if(checks.size() == 1){
+            lineWithCheck = checks.get(0).coords();
+            isPinOrCheck = true;
+        }
+
+        List<LineOfSight> pins = board.currPins;
+        for(LineOfSight line: pins){
+            if(line.contains(currCoord)){
+                lineWithPin = line.coords();
+                isPinOrCheck = true;
+            }
+        }
         for (Coord direction: moveDirection()) {
             Coord moveTo = currCoord.add(direction);
-            if (board.coordInBoard(moveTo) && !board.isAlliedPiece(moveTo)) legalMoves.add(moveTo);
+            if(!board.coordInBoard(moveTo) || board.isAlliedPiece(moveTo));
+            else if(!isPinOrCheck) legalMoves.add(moveTo);
+            else if((lineWithCheck.contains(moveTo) || lineWithCheck.isEmpty()) &&
+                    (lineWithPin.contains(moveTo) || lineWithPin.isEmpty())
+            ){
+                legalMoves.add(moveTo);
+            }
         }
         return legalMoves;
     }
@@ -289,19 +337,46 @@ class Pawn extends Piece{
     @Override
     Set<Coord> legalMoveSet(){
         Set<Coord> legalMoves = new HashSet<>();
-        Coord moveTo = currCoord.add(primaryMoveDirection());
+        boolean isPinOrCheck = false;
+        Set<Coord> lineWithCheck = new HashSet<>();
+        Set<Coord> lineWithPin = new HashSet<>();
+
+        List<LineOfSight> checks = board.currChecks;
+        if(checks.size() >= 2) return legalMoves;
+        else if(checks.size() == 1){
+            lineWithCheck = checks.get(0).coords();
+            isPinOrCheck = true;
+        }
+
+        List<LineOfSight> pins = board.currPins;
+        for(LineOfSight line: pins){
+            if(line.contains(currCoord)){
+                lineWithPin = line.coords();
+                isPinOrCheck = true;
+            }
+        }
 
         // See if pawn can move forward
         int squaresForward = (atStartingSquare()) ? 2 : 1;
         for (int i = 1; i <= squaresForward  ; i++) {
-            Coord moveTwo = currCoord.add(primaryMoveDirection().multiply(i));
-            if(board.coordInBoard(moveTwo) && !board.hasPieceAt(moveTwo)) legalMoves.add(moveTwo);
+            Coord moveTo = currCoord.add(primaryMoveDirection().multiply(i));
+            if (!board.coordInBoard(moveTo) || board.hasPieceAt(moveTo)) break;
+            else if(!isPinOrCheck) legalMoves.add(moveTo);
+            else if((lineWithCheck.contains(moveTo) || lineWithCheck.isEmpty()) &&
+                    (lineWithPin.contains(moveTo) || lineWithPin.isEmpty())
+            ){
+                legalMoves.add(moveTo);
+            }
         }
 
         // To test if any taking move is legal
         for (Coord takeDir: takeDirection()) {
             Coord takeTo = currCoord.add(takeDir);
-            if(board.coordInBoard(takeTo) && (board.isEnemyPiece(takeTo) || board.isEnPassantSquare(takeTo))) {
+            if (!board.coordInBoard(takeTo) || (!board.isEnemyPiece(takeTo) && !board.isEnPassantSquare(takeTo)));
+            else if(!isPinOrCheck) legalMoves.add(takeTo);
+            else if((lineWithCheck.contains(takeTo) || lineWithCheck.isEmpty()) &&
+                    (lineWithPin.contains(takeTo) || lineWithPin.isEmpty())
+            ){
                 legalMoves.add(takeTo);
             }
         }

@@ -129,11 +129,10 @@ class ChessCheckTracker {
 
         if(debug) System.out.println("CCT.UpdateLOSTo: " + pieceCoord);
         Coord pieceToKingVec = currKingCoord.subtract(pieceCoord);
-
         if(knightDirections.contains(pieceToKingVec) && board.pieceAt(pieceCoord) instanceof Knight){
             List<Coord> line = new ArrayList<>();
             line.add(pieceCoord);
-            generateLineOfSight(line);
+            lineOfSights.put(pieceCoord, generateLineOfSight(line));
             return;
         }
 
@@ -251,7 +250,7 @@ class LineOfSight {
     int sightBlockerCount(Chessboard board){
         int count = 0;
         for (int i = 1; i < lineOfSight.size(); i++) {
-            if(!board.hasPieceAt(lineOfSight.get(i))) count++;
+            if(board.hasPieceAt(lineOfSight.get(i))) count++;
         }
         return count;
     }

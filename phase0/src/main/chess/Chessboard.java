@@ -153,6 +153,7 @@ public class Chessboard{
         fullMoveNumber = Integer.parseInt(boardSetup[5]);
 
         setupCheckTrackers();
+        updatePinsAndChecks();
     }
 
     private void setupCheckTrackers(){
@@ -223,9 +224,7 @@ public class Chessboard{
 
         // Update checks for next player
         currCheckTracker().update(move, isEnPassant);
-        List<List<LineOfSight>> pinsAndChecks = currCheckTracker().pinsAndChecks();
-        currPins = pinsAndChecks.get(0);
-        currChecks = pinsAndChecks.get(1);
+        updatePinsAndChecks();
     }
 
     private void updateHalfMoveClock(ChessTurn move){
@@ -256,6 +255,12 @@ public class Chessboard{
                 enPassantSquare = move.from.add(primaryMoveDirection);
             }else enPassantSquare = null;
         }else enPassantSquare = null;
+    }
+
+    private void updatePinsAndChecks(){
+        List<List<LineOfSight>> pinsAndChecks = currCheckTracker().pinsAndChecks();
+        currPins = pinsAndChecks.get(0);
+        currChecks = pinsAndChecks.get(1);
     }
 
     private boolean hasEnemyPawn(Coord coord){
@@ -399,7 +404,8 @@ public class Chessboard{
     }
 
     boolean isKingChecked(){
-        return currChecks.size() != 0;
+        System.out.println(currChecks);
+        return !currChecks.isEmpty();
     }
 
     boolean isCoordAttacked(Coord coord){

@@ -14,7 +14,7 @@ public class ChessGame {
     final ChessTurnTracker currTurn = new ChessTurnTracker();
     Set<Coord> currLegalMoves = new HashSet<>();
 
-    public boolean verbose = false;
+    public boolean verbose = true;
 
     /**
      * Generates an 'n' player Chess Game with custom board size and initial positions
@@ -85,9 +85,10 @@ public class ChessGame {
         // If no piece is selected, and there is an allied piece on the selected tile
         else if (board.hasPieceAt(coord) && board.isAlliedPiece(coord)) {
             selectPieceAt(coord);
-            if(verbose) System.out.println(
-                    "Selected piece: " + board.pieceAt(coord) + " " + currTurn.isOnSelectState());
         }
+        if(verbose) System.out.println(
+                "Selected piece: " + board.pieceAt(coord) + " " + currTurn.isOnSelectState());
+
 
         // If no piece is selected, and an empty or enemy piece is selected, do nothing.
 
