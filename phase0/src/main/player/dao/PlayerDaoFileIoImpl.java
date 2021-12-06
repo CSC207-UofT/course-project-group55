@@ -7,28 +7,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
-* @Description: Use class serialization and file IO to do persistence of user's information
-* @Author: Ang Li
-* @Date: 2021/12/5
-*/
+ * @Description: Use class serialization and file IO to do persistence of user's information
+ * @Author: Ang Li
+ * @Date: 2021/12/5
+ */
 public class PlayerDaoFileIoImpl implements PlayerDao {
     public static final String PLAYER_PERSISTENCE_ROOT_PATH = ".chess" + File.separator + "players";
     public static final String PLAYER_PERSISTENCE_SUFFIX_NAME = ".player";
+
     static {
         File rootFile = new File(PLAYER_PERSISTENCE_ROOT_PATH);
-        if (!rootFile.exists()){
+        if (!rootFile.exists()) {
             rootFile.mkdirs();
         }
     }
 
     /**
-    * @Description:  Add one user's information to file
-    * @Param: [player]
-    * @return: boolean
-    */
+     * @Description: Add one user's information to file
+     * @Param: [player]
+     * @return: boolean
+     */
     @Override
     public boolean add(Player player) {
-        if (player == null || ! player.isPersistenceNeeded()){
+        if (player == null || !player.isPersistenceNeeded()) {
             return false;
         }
         try {
@@ -37,27 +38,27 @@ public class PlayerDaoFileIoImpl implements PlayerDao {
             oos.writeObject(player);
             oos.close();
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
 
     /**
-    * @Description:  Update one user's information in file
-    * @Param: [player]
-    * @return: boolean
-    */
+     * @Description: Update one user's information in file
+     * @Param: [player]
+     * @return: boolean
+     */
     @Override
     public boolean update(Player player) {
         return add(player);
     }
 
     /**
-    * @Description: Get one user from file by username
-    * @Param: [playerName]
-    * @return: player.entity.Player
-    */
+     * @Description: Get one user from file by username
+     * @Param: [playerName]
+     * @return: player.entity.Player
+     */
     @Override
     public Player getByName(String playerName) {
         String playerFileName = playerName + PLAYER_PERSISTENCE_SUFFIX_NAME;
@@ -67,16 +68,16 @@ public class PlayerDaoFileIoImpl implements PlayerDao {
             Player player = (Player) ois.readObject();
             ois.close();
             return player;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
     /**
-    * @Description: Delete one user's information in file
-    * @Param: [player]
-    * @return: boolean
-    */
+     * @Description: Delete one user's information in file
+     * @Param: [player]
+     * @return: boolean
+     */
     @Override
     public boolean delete(Player player) {
         String playerFileName = player.getName() + PLAYER_PERSISTENCE_SUFFIX_NAME;
@@ -85,10 +86,10 @@ public class PlayerDaoFileIoImpl implements PlayerDao {
     }
 
     /**
-    * @Description: Get all users in file
-    * @Param: []
-    * @return: java.util.List<player.entity.Player>
-    */
+     * @Description: Get all users in file
+     * @Param: []
+     * @return: java.util.List<player.entity.Player>
+     */
     @Override
     public List<Player> getAllPlayers() {
         ArrayList<Player> playerArrayList = new ArrayList<>();

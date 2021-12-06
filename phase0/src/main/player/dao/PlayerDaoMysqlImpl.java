@@ -3,12 +3,13 @@ package player.dao;
 import player.entity.Player;
 
 import java.util.List;
-/** 
-* @Description: This implementation of PlayerDao is based on using MySQL to do persistence
-* @Author: Ang Li
-* @Date: 2021/12/5 
-*/ 
-public class PlayerDaoMysqlImpl implements PlayerDao{
+
+/**
+ * @Description: This implementation of PlayerDao is based on using MySQL to do persistence
+ * @Author: Ang Li
+ * @Date: 2021/12/5
+ */
+public class PlayerDaoMysqlImpl implements PlayerDao {
     @Override
     public boolean add(Player player) {
         // TODO: Use jdbc to connect to MySQL to implement it
