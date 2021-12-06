@@ -1,5 +1,6 @@
 package chess;
 
+import javax.crypto.CipherInputStream;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -74,14 +75,23 @@ class ChessCheckTracker {
             else if(!board.isEnemyPiece(moveTo) || board.pieceAt(moveTo) instanceof King);
             else if(board.pieceAt(moveTo) instanceof Pawn){
                 Pawn pawn = (Pawn) board.pieceAt(moveTo);
-                if(i == 1 && pawn.takeDirection().contains(direction.multiply(-1))){
-                    lineOfSights.put(moveTo, generateLineOfSight(new ArrayList<>(lineOfCoords)));
+                if(pawn.takeDirection().contains(direction) && i == 1){
+                    System.out.println("lineOfCoords: " + lineOfCoords);
+                    lineOfSights.put(moveTo, generateLineOfSight(cloneList(lineOfCoords)));
                 }
             }else if(pieceMovesInDirection(moveTo, direction)){
-                lineOfSights.put(moveTo, generateLineOfSight(new ArrayList<>(lineOfCoords)));
+                lineOfSights.put(moveTo, generateLineOfSight(cloneList(lineOfCoords)));
             }
         }
 
+    }
+
+    private List<Coord> cloneList(List<Coord> list){
+        List<Coord> clonedList = new ArrayList<>();
+        for (Coord coord: list) {
+            clonedList.add(coord);
+        }
+        return clonedList;
     }
 
     private boolean pieceMovesInDirection(Coord pieceCoord, Coord direction){
@@ -266,7 +276,7 @@ class LineOfSight {
 
     @Override
     public String toString(){
-        return MessageFormat.format("LOS {0}: {1}", pieceWithSight, lineOfSight);
+        return MessageFormat.format("LOS {0}|| {1}", pieceWithSight, lineOfSight);
     }
 
 

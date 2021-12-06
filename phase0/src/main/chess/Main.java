@@ -8,8 +8,9 @@ public class Main {
         Player p1 = new UserTemp("a");
         Player p2 = new UserTemp("b");
         ChessGame game = new ChessGame(new Player[]{p1, p2},
-                "rnb1kbnr/pp1Npppp/8/1B6/7q/8/PPPPPBPP/R2QK1NR w KQkq - 0 1");            // pinning FEN
-        //        "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4"); // Castling FEN
+        //        "rnbqkbnr/8/3P4/8/8/8/PPP1PPPP/RNB1KBNR w KQkq - 0 1");             // Pawn check
+        //        "rnb1kbnr/pp1Npppp/8/1B6/7q/8/PPPPPBPP/R2QK1NR w KQkq - 0 1");            // pinning FEN
+                "rnbqk2r/pppppppp/8/8/8/8/PPPPPPPP/RNBQK2R w KQkq - 0 1"); // Castling FEN
 
         game.verbose = true;
 
@@ -51,11 +52,15 @@ public class Main {
 
         String[] castling  = new String[] {
                 "e1", "g1",
-                "a7", "a6",
-                "g1"
+                "e8", "g8"
         };
 
-        for (String move: pinsAndBlocks) {
+        String[] pawnCheck  = new String[] {
+                "d6", "d7",
+                "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"
+        };
+
+        for (String move: castling) {
             Coord moveC = new Coord(move);
             System.out.println(moveC);
 
