@@ -19,9 +19,12 @@ public class Chessboard{
     private int halfMoveClock;
     private int fullMoveNumber;
 
+
+
     char promoteToPiece = 'q';
 
     private EnumMap<playerColor, ChessCheckTracker> checkTrackers = new EnumMap<>(playerColor.class);
+    //TODO: private EnumMap<playerColor, Piece> kings = new EnumMap<>(playerColor.class);
     List<LineOfSight> currPins = new ArrayList<>();
     List<LineOfSight> currChecks = new ArrayList<>();
 

@@ -31,7 +31,7 @@ class CastlingTracker {
     Set<Coord> validCastleCoords(King king){
         Set<Coord> coords = new HashSet<>();
         for (Corner corner: Corner.color.get(king.color())) {
-            coords.add(corner.castlingSqs);
+            if(castlingStates.contains(corner)) coords.add(corner.castlingSqs);
         }
 
         return coords;

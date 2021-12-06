@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import static chess.PieceRole.*;
 /**
@@ -15,6 +16,7 @@ import static chess.PieceRole.*;
 * @Date: 2021/12/5
 */
 public abstract class Player implements Serializable, Comparable<Player> {
+    private UUID uuid;
     private String name;
     private int numWins;
     private int numLosses;
@@ -23,7 +25,19 @@ public abstract class Player implements Serializable, Comparable<Player> {
     private Map<PieceRole, Integer> enemyPiecesTaken;
 
     protected Player(String name) {
+        // This name is the player's nickname and no duplication is allowed
         this.name = name;
+        this.uuid = UUID.randomUUID();
+        this.enemyPiecesTaken = new HashMap<>();
+        for (PieceRole role : values()) {
+            this.enemyPiecesTaken.put(role, 0);
+        }
+    }
+
+    protected Player(String name, String password) {
+        this.name = name;
+        this.password = password;
+        this.uuid = UUID.randomUUID();
         this.enemyPiecesTaken = new HashMap<>();
         for (PieceRole role : values()) {
             this.enemyPiecesTaken.put(role, 0);
