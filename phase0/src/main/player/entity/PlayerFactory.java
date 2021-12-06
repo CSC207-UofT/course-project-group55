@@ -19,4 +19,15 @@ public class PlayerFactory {
                 throw new  ValueException("wrong player role type");
         }
     }
+
+    public static Player newPlayer(String name, String password,PlayerRole playerRole){
+        switch (playerRole){
+            case Gust:
+                return new GustPlayer(name, password);
+            case Common:
+                return new CommonPlayer(name, password);
+            default:
+                throw new  ValueException("wrong player role type");
+        }
+    }
 }
