@@ -1,11 +1,11 @@
 package player.entity;
 
 /**
-* @Description: Gust user, not necessary to be saved
-* @Author: Ang Li
-* @Date: 2021/12/5
-*/
-public class GustPlayer extends Player{
+ * @Description: Gust user, not necessary to be saved
+ * @Author: Ang Li
+ * @Date: 2021/12/5
+ */
+public class GustPlayer extends Player {
 
     protected GustPlayer(String name) {
         super(name);
@@ -21,13 +21,13 @@ public class GustPlayer extends Player{
     }
 
     @Override
-    public String getPassword(){
+    public String getPassword() {
         System.out.println("gust has no password!");
         return null;
     }
 
     @Override
-    public void setPassword(String password){
+    public void setPassword(String password) {
         System.out.println("gust has no password!");
     }
 }
