@@ -156,7 +156,6 @@ class ChessCheckTracker {
         throw new AssertionError("Missing King Piece on the Board");
     }
 
-
     boolean isAlliedKingChecked(){
         for(LineOfSight line: lineOfSights.values()){
             if(debug) System.out.println("CCT.iAKC; kingcolor: " + kingColor);
@@ -167,19 +166,25 @@ class ChessCheckTracker {
         return false;
     }
 
-    /**
-     * Returns the LoS object that is responsible for pinning the piece onto the king.
-     * @param piece
-     * @return
-     */
-    List<LineOfSight> pins(Piece piece){
+    List<List<LineOfSight>> pinsAndChecks() {
+        List<LineOfSight> checks = new ArrayList<>();
         List<LineOfSight> pins = new ArrayList<>();
 
-        for (LineOfSight lOS : lineOfSights.values()) {
-            //if
+        for (LineOfSight line : lineOfSights.values()) {
+            int blockCount = line.sightBlockerCount(board);
+            if (blockCount == 0) {
+                checks.add(line);
+            }else if (blockCount == 1){
+                pins.add(line);
+            }
         }
-        return pins;
+
+        List<List<LineOfSight>> pinsAndChecks = new ArrayList<>();
+        pinsAndChecks.add(pins);
+        pinsAndChecks.add(checks);
+        return pinsAndChecks;
     }
+
 
     /**
      * For the sole purpose of checking if a certain square is a square that the king can move into.
@@ -251,6 +256,10 @@ class LineOfSight {
         return count;
     }
 
+    Set<Coord> coords(){
+        return new HashSet<>(lineOfSight);
+    }
+
     boolean contains(Coord coord){
         return lineOfSight.contains(coord);
     }
@@ -263,4 +272,5 @@ class LineOfSight {
 
 
 }
+
 

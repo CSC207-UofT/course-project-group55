@@ -19,9 +19,11 @@ public class Chessboard{
     private int halfMoveClock;
     private int fullMoveNumber;
 
-    private EnumMap<playerColor, ChessCheckTracker> checkTrackers = new EnumMap<>(playerColor.class);
-
     char promoteToPiece = 'q';
+
+    private EnumMap<playerColor, ChessCheckTracker> checkTrackers = new EnumMap<>(playerColor.class);
+    List<LineOfSight> currPins = new ArrayList<>();
+    List<LineOfSight> currChecks = new ArrayList<>();
 
     /**
      * Generates a Chessboard from the boardSetup String.
@@ -216,8 +218,11 @@ public class Chessboard{
         System.out.println("Cb.mP: Piece Moved");
         System.out.println("Cb.mP; currColor: " + currColor());
 
+        // Update checks for next player
         currCheckTracker().update(move, isEnPassant);
-
+        List<List<LineOfSight>> pinsAndChecks = currCheckTracker().pinsAndChecks();
+        currPins = pinsAndChecks.get(0);
+        currChecks = pinsAndChecks.get(1);
     }
 
     private void updateHalfMoveClock(ChessTurn move){
@@ -391,7 +396,7 @@ public class Chessboard{
     }
 
     boolean isKingChecked(){
-        return currCheckTracker().isAlliedKingChecked();
+        return currChecks.size() != 0;
     }
 
     boolean isCoordAttacked(Coord coord){
