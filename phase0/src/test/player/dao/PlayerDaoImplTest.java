@@ -34,7 +34,6 @@ public class PlayerDaoImplTest {
         Player alice = PlayerFactory.newPlayer("Alice", PlayerRole.Gust);
         boolean isAliceSaved = playerDao.add(alice);
         assertFalse(isAliceSaved);
-
         savedPlayers.add(bob);
         savedPlayers.add(alice);
     }
