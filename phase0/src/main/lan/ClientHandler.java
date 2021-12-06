@@ -38,4 +38,8 @@ public class ClientHandler {
     public String receiveMessage() throws IOException {
         return this.bufferedReader.readLine();
     }
+
+    public String getClientUsername() {
+        return this.clientUsername;
+    }
 }

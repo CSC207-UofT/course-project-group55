@@ -8,32 +8,30 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Server {
-    ServerSocket serverSocket = null;
-    ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+    ServerSocket serverSocket;
+    ArrayList<ClientHandler> clientHandlers;
+
+    public Server(){
+        serverSocket = null;
+        clientHandlers = new ArrayList<>();
+    }
 
     /**
-     * User to runServer for two player chessGame.
+     * Used to runServer for two player chessGame.
      * @param numPlayers used to accept no more than numPlayers to the server
      * @param strPort used to set up server with given strPort
      * @return false if given strPort is taken by another server.
      * @return true fi given strPort is valid.
      */
     public boolean runServer(int numPlayers, String strPort) throws IOException {
-        Socket socket = null;
         int port = Integer.parseInt(strPort);
-        try{
-            this.serverSocket = new ServerSocket(port);
-        } catch (BindException e){
+        if (!startServer(port)){
             return false;
         }
         String playerNames = "";
-        ClientHandler clientHandler;
         //Get numPlayer's info
         for (int i = 0; i < numPlayers; i++) {
-            socket = this.serverSocket.accept();
-            clientHandler = new ClientHandler(socket);
-            //System.out.println(clientHandler.clientUsername);
-            clientHandlers.add(clientHandler);
+            addClientHandler();
         }
         //can close server because all connections are made.
         closeServer();
@@ -54,6 +52,28 @@ public class Server {
             i++;
         }
         return true;
+    }
+
+
+    /**
+     *
+     */
+    public boolean startServer(int port) throws IOException {
+        try{
+            this.serverSocket = new ServerSocket(port);
+        } catch (BindException e){
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * When client is connects to the server, add to Client's info to ClientHandler
+     */
+    public void addClientHandler() throws IOException {
+        Socket socket = this.serverSocket.accept();
+        ClientHandler clientHandler = new ClientHandler(socket);
+        clientHandlers.add(clientHandler);
     }
 
     /**
