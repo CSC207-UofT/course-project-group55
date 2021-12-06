@@ -5,11 +5,11 @@ import player.entity.Player;
 import java.util.List;
 
 /**
-* @Description: This class is used to assemble the basic data persistence
+ * @Description: This class is used to assemble the basic data persistence
  * operations into some complete business requirements
-* @Author: Ang Li
-* @Date: 2021/12/5
-*/
+ * @Author: Ang Li
+ * @Date: 2021/12/5
+ */
 public interface PlayerService {
     List<Player> getAllPlayers();
 
