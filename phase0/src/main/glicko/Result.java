@@ -8,11 +8,10 @@ public class Result {
     private static final double WIN_POINTS = 1.0;
     private static final double DRAW_POINTS = 0.5;
     private static final double LOSS_POINTS = 0.0;
-
-    // Check for draw, and ratings for two different players.
-    private boolean isDraw = false;
     private final GlickoRating winner;
     private final GlickoRating loser;
+    // Check for draw, and ratings for two different players.
+    private boolean isDraw = false;
 
     /**
      * Record result for match between two players with no draw

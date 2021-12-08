@@ -32,7 +32,7 @@ public class GlickoCalculator {
      * Constructor using custom volatility and tau values instead of defaults.
      *
      * @param initialVolatility desired starting value for volatility
-     * @param tau desired starting value for tau
+     * @param tau               desired starting value for tau
      */
     public GlickoCalculator(double initialVolatility, double tau) {
         this.tau = tau;

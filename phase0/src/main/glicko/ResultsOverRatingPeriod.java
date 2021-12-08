@@ -29,7 +29,7 @@ public class ResultsOverRatingPeriod {
      * Add a victory or loss result to the rating period set
      *
      * @param winner rating data for winning player
-     * @param loser rating data for losing player
+     * @param loser  rating data for losing player
      */
     public void addResult(GlickoRating winner, GlickoRating loser) {
         Result result = new Result(winner, loser);

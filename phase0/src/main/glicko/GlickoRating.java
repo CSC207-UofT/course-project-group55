@@ -36,9 +36,9 @@ public class GlickoRating {
     /**
      * Constructor for GlickoRating that uses user-defined starting values.
      *
-     * @param ratingSystem GlickoCalculator object, used for rating calculations
-     * @param startRating Preset rating value different from default to instantiate with
-     * @param startDeviation Preset deviation value different from default to instantiate with
+     * @param ratingSystem    GlickoCalculator object, used for rating calculations
+     * @param startRating     Preset rating value different from default to instantiate with
+     * @param startDeviation  Preset deviation value different from default to instantiate with
      * @param startVolatility Preset volatility value different from default to instantiate with
      */
     public GlickoRating(GlickoCalculator ratingSystem, double startRating,
