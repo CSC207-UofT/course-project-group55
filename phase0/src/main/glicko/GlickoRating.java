@@ -23,7 +23,9 @@ public class GlickoRating {
     private double tempVolatility;
 
     /**
-     * @param ratingSystem Instance of GlickoCalculator object
+     * Constructor for GlickoRating that uses default values.
+     *
+     * @param ratingSystem GlickoCalculator object, used for rating calculations
      */
     public GlickoRating(GlickoCalculator ratingSystem) {
         this.rating = ratingSystem.getDefaultRating();
@@ -31,6 +33,14 @@ public class GlickoRating {
         this.volatility = ratingSystem.getDefaultVolatility();
     }
 
+    /**
+     * Constructor for GlickoRating that uses user-defined starting values.
+     *
+     * @param ratingSystem GlickoCalculator object, used for rating calculations
+     * @param startRating Preset rating value different from default to instantiate with
+     * @param startDeviation Preset deviation value different from default to instantiate with
+     * @param startVolatility Preset volatility value different from default to instantiate with
+     */
     public GlickoRating(GlickoCalculator ratingSystem, double startRating,
                         double startDeviation, double startVolatility) {
         this.rating = startRating;
@@ -75,11 +85,20 @@ public class GlickoRating {
         this.rating = GlickoCalculator.convertRatingToOriginalScale(rating);
     }
 
-
+    /**
+     * Return player's current standard deviation, scaled for comparison to other rating systems.
+     *
+     * @return double
+     */
     public double getDeviation() {
         return deviation;
     }
 
+    /**
+     * Set player's deviation
+     *
+     * @param deviation desired value to set player's deviation
+     */
     public void setDeviation(double deviation) {
         this.deviation = deviation;
     }
@@ -87,7 +106,7 @@ public class GlickoRating {
     /**
      * Returns player's standard deviation, scaled for the algorithm.
      *
-     * @return double
+     * @return double, glicko2 deviation
      */
     public double getGlicko2Deviation() {
         return GlickoCalculator.convertDeviationToGlicko2Scale(deviation);
@@ -102,24 +121,67 @@ public class GlickoRating {
         this.deviation = GlickoCalculator.convertDeviationToOriginalScale(deviation);
     }
 
+    /**
+     * Return user's current volatility value.
+     *
+     * @return double, volatility
+     */
     public double getVolatility() {
         return volatility;
     }
 
+    /**
+     * Set user's volatility value using given value.
+     *
+     * @param volatility double, desired volatility value
+     */
     public void setVolatility(double volatility) {
         this.volatility = volatility;
     }
 
+    /**
+     * Set user's tempRating value using given value.
+     *
+     * @param tempRating double, desired tempRating value
+     */
     public void setTempRating(double tempRating) {
         this.tempRating = tempRating;
     }
 
+    /**
+     * Set user's tempDeviation value using given value.
+     *
+     * @param tempDeviation double, desired tempDeviation value
+     */
     public void setTempDeviation(double tempDeviation) {
         this.tempDeviation = tempDeviation;
     }
 
+    /**
+     * Set user's tempVolatility value using given value.
+     *
+     * @param tempVolatility double, desired tempVolatility value
+     */
     public void setTempVolatility(double tempVolatility) {
         this.tempVolatility = tempVolatility;
+    }
+
+    /**
+     * Return the number of results associated with the current rating.
+     *
+     * @return int, numResults
+     */
+    public int getNumResults() {
+        return numResults;
+    }
+
+    /**
+     * Add increment (will always be positive) to number of results.
+     *
+     * @param increment int to increment results by
+     */
+    public void addToNumResults(int increment) {
+        this.numResults = numResults + increment;
     }
 
     /**
@@ -133,18 +195,5 @@ public class GlickoRating {
         this.setTempRating(0);
         this.setTempDeviation(0);
         this.setTempVolatility(0);
-    }
-
-    public int getNumResults() {
-        return numResults;
-    }
-
-    /**
-     * Add increment (will always be positive) to number of results.
-     *
-     * @param increment int to increment results by
-     */
-    public void addToNumResults(int increment) {
-        this.numResults = numResults + increment;
     }
 }

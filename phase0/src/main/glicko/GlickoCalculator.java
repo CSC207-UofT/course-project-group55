@@ -21,7 +21,7 @@ public class GlickoCalculator {
     private final double defaultVolatility;
 
     /**
-     * Constructor with default volatility values.
+     * Constructor with default volatility and tau values.
      */
     public GlickoCalculator() {
         tau = DEFAULT_TAU;
@@ -29,7 +29,10 @@ public class GlickoCalculator {
     }
 
     /**
-     * Constructor using set volatility values instead of defaults.
+     * Constructor using custom volatility and tau values instead of defaults.
+     *
+     * @param initialVolatility desired starting value for volatility
+     * @param tau desired starting value for tau
      */
     public GlickoCalculator(double initialVolatility, double tau) {
         this.tau = tau;
@@ -79,6 +82,8 @@ public class GlickoCalculator {
         return (deviation / MULTIPLIER);
     }
 
+    // Everything here in this chunk is purely to support the main calculator algorithm.
+
     private double f(double x, double delta, double phi, double v, double a, double tau) {
         return (Math.exp(x) * (Math.pow(delta, 2) - Math.pow(phi, 2) - v - Math.exp(x)) /
                 (2.0 * Math.pow(Math.pow(phi, 2) + v + Math.exp(x), 2))) - ((x - a) / Math.pow(tau, 2));
@@ -91,8 +96,6 @@ public class GlickoCalculator {
     private double E(double rating, double enemyRating, double enemyDeviation) {
         return 1.0 / (1.0 + Math.exp(-1.0 * g(enemyDeviation) * (rating - enemyRating)));
     }
-
-    // End of the chunk of pure code-distilled suffering.
 
     private double v(GlickoRating rating, List<Result> results) {
         double v = 0.0;
@@ -127,21 +130,12 @@ public class GlickoCalculator {
         return Math.sqrt(Math.pow(phi, 2) + Math.pow(sigma, 2));
     }
 
-    public double getDefaultRating() {
-        return DEFAULT_RATING;
-    }
-
-    public double getDefaultVolatility() {
-        return defaultVolatility;
-    }
-
-    public double getDefaultDeviation() {
-        return DEFAULT_DEVIATION;
-    }
+    // End of the chunk of pure mathematical misery (but hey, maybe you're into that).
 
     /**
      * Rating calculator based on initial rating values and a series of results. Described in step 5 of Glickman's
      * outline of the rating system, see here: http://www.glicko.net/glicko/glicko2.pdf
+     * This is private, but I'm documenting it anyway since it's pretty unintelligble without.
      *
      * @param rating  rating information for a player
      * @param results a set of game results, affects rating.
@@ -198,5 +192,37 @@ public class GlickoCalculator {
                 (Math.pow(newPhi, 2) * ratingByOutcome(rating, results)));
         rating.setTempDeviation(newPhi);
         rating.addToNumResults(results.size());
+    }
+
+    /*
+    (for now this could actually be private but it being viewable has no negative
+    consequences and it might be helpful for expansion later).
+    */
+
+    /**
+     * Return default glicko rating value
+     *
+     * @return double, DEFAULT_RATING
+     */
+    public double getDefaultRating() {
+        return DEFAULT_RATING;
+    }
+
+    /**
+     * Return default volatility value
+     *
+     * @return double, DEFAULT_VOLATILITY
+     */
+    public double getDefaultVolatility() {
+        return defaultVolatility;
+    }
+
+    /**
+     * Return default deviation value
+     *
+     * @return double, DEFAULT_DEVIATION
+     */
+    public double getDefaultDeviation() {
+        return DEFAULT_DEVIATION;
     }
 }

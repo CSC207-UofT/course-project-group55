@@ -111,10 +111,22 @@ public class Result {
         return opponent;
     }
 
+    /**
+     * Return the winner in the game result
+     * In the case of isDraw=true, returns player1
+     *
+     * @return GlickoRating, winner
+     */
     public GlickoRating getWinner() {
         return this.winner;
     }
 
+    /**
+     * Return the loser in the game result
+     * In the case of isDraw=true, returns player2
+     *
+     * @return GlickoRating, loser
+     */
     public GlickoRating getLoser() {
         return this.loser;
     }
